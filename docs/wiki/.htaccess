@@ -1,0 +1,12 @@
+AddDefaultCharset utf-8
+Options All -ExecCGI -Indexes -Includes +FollowSymLinks
+IndexIgnore */*
+
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  #RewriteCond $1 !^(index\.php)  # use in production. Allow only index.php acces and files under files/ folder
+  RewriteRule ^(.*)$ index.php/?q=$1 [L]
+
+</IfModule>

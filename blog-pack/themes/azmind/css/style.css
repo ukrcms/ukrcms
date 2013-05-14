@@ -1,0 +1,413 @@
+@import url(http://fonts.googleapis.com/css?family=Bad+Script&subset=latin,cyrillic);
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  line-height: 1;
+  background: #ffffff;
+  font-size: 12px;
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  font-weight: 400;
+  text-align: center;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+strong {
+  font-weight: 700;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Open Sans', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+}
+
+#header {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.header-bottom {
+  width: 960px;
+  margin: 15px auto 0;
+}
+
+.logo {
+  padding-top: 15px;
+}
+.logo a {
+  font-family: 'Bad Script', cursive;
+  font-size: 55px;
+  text-align: center;
+  color: #888888;
+  text-decoration: none;
+}
+.logo a:hover {
+  color: #ff6600;
+}
+
+#content {
+  width: 960px;
+  overflow: hidden;
+  text-align: left;
+  margin: 0 auto;
+}
+
+#posts {
+  float: left;
+  width: 640px;
+}
+
+.single-post {
+  width: 620px;
+  border-bottom: 1px solid #eeeeee;
+  margin: 0;
+  padding: 0 10px 25px;
+}
+
+.single-post-image {
+  float: left;
+  margin-top: 35px;
+  overflow: hidden;
+}
+
+.single-post-text {
+  float: left;
+  width: 620px;
+  margin-top: 25px;
+}
+
+.single-post-text h2 {
+  float: left;
+  width: 620px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #3d3d3d;
+  line-height: 30px;
+}
+
+.meta {
+  float: right;
+  width: 170px;
+  margin-top: 15px;
+  padding-left: 15px;
+  color: #aaaaaa;
+  line-height: 24px;
+  border-left: 1px solid #eeeeee;
+}
+
+.single-post-content {
+  float: left;
+  width: 420px;
+  margin-top: 15px;
+  color: #888888;
+  line-height: 24px;
+}
+
+.posts-navigation {
+  width: 620px;
+  color: #888888;
+  margin: 22px 10px;
+}
+
+.posts-navigation-next {
+  float: right;
+  width: 200px;
+  text-align: right;
+}
+
+.posts-navigation-prev {
+  float: left;
+  width: 200px;
+}
+
+.full-post {
+  width: 620px;
+  color: #888888;
+  line-height: 24px;
+  margin: 30px 0 0;
+  padding: 0 10px 25px;
+}
+
+.full-post h2 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #3d3d3d;
+  line-height: 30px;
+  margin: 10px 0 5px;
+}
+
+.full-post h3 {
+  font-size: 20px;
+  font-weight: 400;
+  color: #3d3d3d;
+  line-height: 30px;
+  margin: 10px 0 5px;
+}
+
+.full-post h2.full-post-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+}
+
+.full-post img {
+  overflow: hidden;
+  margin: 6px 0;
+}
+
+.full-post-content {
+  margin: 15px 0 10px;
+}
+
+.meta-full-post {
+  border-bottom: 1px solid #eeeeee;
+  color: #aaaaaa;
+  padding: 10px 0;
+}
+
+.full-post-pages {
+  margin-bottom: 10px;
+}
+
+.full-post p {
+  padding: 3px 0;
+}
+
+.full-post ol {
+  list-style-type: decimal;
+  padding: 5px 35px;
+}
+
+#sidebar {
+  float: left;
+  width: 320px;
+  color: #888888;
+  padding-bottom: 35px;
+}
+
+ul.sidebar-content {
+  width: 290px;
+}
+
+ul.sidebar-content li ul {
+  padding: 5px 25px 0 35px;
+}
+
+ul.sidebar-content li ul li {
+  line-height: 24px;
+  border-bottom: 1px dotted #dddddd;
+  padding: 3px 0;
+}
+
+ul.sidebar-content li ul li:last-child {
+  border: 0;
+}
+
+#sidebar h2 {
+  margin-top: 35px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #3d3d3d;
+  text-transform: uppercase;
+  padding: 0 0 10px 35px;
+}
+
+.textwidget {
+  line-height: 24px;
+  padding: 5px 25px 0 35px;
+}
+
+.textwidget a {
+  border-bottom: 1px dotted #dddddd;
+}
+
+#footer-credits {
+  min-width: 960px;
+  background: #1d1d1d;
+  overflow: hidden;
+  font-family: 'Open Sans', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  margin: 0 auto;
+}
+
+.footer-credits-inside {
+  width: 960px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #3d3d3d;
+  margin: 0 auto;
+}
+
+#footer-credits a {
+  color: #555555;
+  text-decoration: none;
+}
+
+.footer-credits-right {
+  float: right;
+  padding: 20px 10px;
+}
+
+#comments-wrap {
+  padding-bottom: 30px;
+  margin: 25px 0 0;
+}
+
+h3#comments-number, h3.postcomment {
+  padding-bottom: 0;
+  font-size: 18px;
+  color: #3d3d3d;
+  line-height: 30px;
+}
+
+ol.commentlist {
+  list-style: none;
+  text-indent: 0;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+ol.commentlist li {
+  border: 1px solid #f8f8f8;
+  height: 1%;
+  position: relative;
+  margin: 0 0 10px;
+  padding: 10px 10px 7px 57px;
+}
+
+ol.commentlist li div.comment-author {
+  padding: 0 170px 0 0;
+}
+
+ol.commentlist li div.vcard {
+  font: bold 12px 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  line-height: 24px;
+  padding-bottom: 5px;
+}
+
+ol.commentlist li div.vcard cite.fn {
+  font-style: normal;
+}
+
+ol.commentlist li div.vcard img.avatar {
+  border: 1px solid #f8f8f8;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  padding: 2px;
+}
+
+ol.commentlist li div.comment-meta {
+  font: normal 12px 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  line-height: 24px;
+  position: absolute;
+  right: 10px;
+  text-align: right;
+  top: 10px;
+}
+
+ol.commentlist li div.comment-meta a {
+  color: #aaaaaa;
+  text-decoration: none;
+}
+
+ol.commentlist li p {
+  font: normal 12px 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  line-height: 24px;
+  margin: 0 0 1em;
+}
+
+ol.commentlist li div.reply {
+  font-size: 12px;
+}
+
+#respond {
+  padding: 25px 0 0;
+}
+
+form#commentform input {
+  margin-top: 10px;
+  width: 260px;
+  height: 30px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  font-size: 12px;
+  color: #aaaaaa;
+  line-height: 20px;
+  padding: 0 5px;
+}
+
+form#commentform textarea {
+  margin-top: 10px;
+  width: 340px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  overflow: auto;
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  font-size: 12px;
+  color: #aaaaaa;
+  line-height: 20px;
+  padding: 5px;
+}
+
+form#commentform input#submit {
+  width: 150px;
+  background: #f8f8f8;
+  color: #888888;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, .clearfix {
+  display: block;
+}
+
+.single-post-text h2 a, .full-post h2 a, #footer-credits a:hover {
+  color: #3d3d3d;
+  text-decoration: none;
+}
+
+.single-post-text h2 a:hover, .meta a, .posts-navigation a:hover, .full-post a, .full-post h2 a:hover, #sidebar a:hover, ol.commentlist li div.comment-meta a:hover {
+  color: #ff6600;
+  text-decoration: none;
+}
+
+.meta span, .meta-full-post span {
+  color: #888888;
+}
+
+.meta a:hover, .posts-navigation a, .full-post a:hover, #sidebar a {
+  color: #888888;
+  text-decoration: none;
+}
+
+.comment-body {
+  margin-left: 15px;
+}
