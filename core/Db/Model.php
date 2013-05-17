@@ -168,7 +168,7 @@
       } elseif ($relationParams[0] == self::MANY_TO_MANY) {
         $select = $table->select();
         $relatedTableInfo = explode(',', $relationParams[2]);
-        $select->join('left join ' . trim($relatedTableInfo[0]) . ' on ' . $relatedTableInfo[0] . '.' . trim($relatedTableInfo[2]) . '=' . $table->tableName() . '.id');
+        $select->join('left join ' . trim($relatedTableInfo[0]) . ' on ' . $relatedTableInfo[0] . '.' . trim($relatedTableInfo[2]) . '=' . $table->getTableName() . '.id');
         $select->where($relatedTableInfo[0] . '.' . trim($relatedTableInfo[1]) . ' = ? ', $this->pk());
         $items = $table->fetchAll($select);
         return $items;
