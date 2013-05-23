@@ -28,7 +28,12 @@ EOF
   if [ "$2" == "-b" ]
   then
     echo "backup ";
-    mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $FILE_NAME;
+    mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $FILE_NAME --add-drop-table --comments=false ;
+
+    sed ':a;N;$!ba;s/\n/THISISUNIQUESTRING/g' -i $FILE_NAME;
+    sed -e 's/;THISISUNIQUESTRING/;\n/g' -i $FILE_NAME;
+    sed -e 's/THISISUNIQUESTRING//g' -i $FILE_NAME;
+
   elif [ "$2" == "-r" ]
   then
     echo "restore"
