@@ -48,6 +48,9 @@ class InstallUkrCms {
       return false;
     }
 
+    $data['INSTALL_ADMIN_PATH'] = trim($data['INSTALL_ADMIN_PATH'], '/');
+    $data['INSTALL_SITE_PATH'] = '/' . trim($data['INSTALL_SITE_PATH'], '/');
+
     $this->data = $data;
 
     try {
@@ -77,6 +80,7 @@ class InstallUkrCms {
       foreach (file($importData) as $line) {
         $line = trim($line);
         if (!empty($line)) {
+          $line = str_replace(' `uc_', ' `' . $this->get('INSTALL_DB_PREFIX'), $line);
           $conn->exec($line);
         }
       }
@@ -86,8 +90,6 @@ class InstallUkrCms {
       return false;
     }
 
-//      $conn->exec('TRUNCATE TABLE uc_user');
-//    @add user creation
     $fileContent = file_get_contents($fileConfig);
     if ($fileContent === false) {
       $this->errors[] = 'Неможливо прочитати файл конфігурації';
@@ -98,7 +100,6 @@ class InstallUkrCms {
       $fileContent = str_replace($from, $value, $fileContent);
     }
 
-    unlink($fileConfig);
     if (!file_put_contents($fileConfig, $fileContent)) {
       $this->errors[] = 'Неможливо зберегти файл конфігурації';
       return false;
@@ -731,7 +732,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   background-color: #e6e6e6;
 }
 .btn:active {
-  background-color: #cccccc                                                                                                           \9;
+  background-color: #cccccc                                                                                                                \9;
 }
 .btn:first-child {
   *margin-left: 0;
@@ -757,7 +758,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   background-color: #e6e6e6;
-  background-color: #d9d9d9                                                                                                           \9;
+  background-color: #d9d9d9                                                                                                                \9;
   outline: 0;
 }
 .btn[disabled] {
@@ -833,9 +834,11 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
             Вітаю, Ваш сайт успішно інстальовано<br>
             Ось дані для адміністрування вашого сайту:<br><br>
 
-            Сайт: <a href="<? echo $sitePath ?>"><? echo $siteUrl ?></a><br>
+            Сайт:
+            <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>"><?php echo $progress->get('INSTALL_SITE_PATH'); ?></a>
+            <br>
             Панель адміністрування:
-            <a href="<? echo $sitePath . $progress->get('INSTALL_ADMIN_PATH') ?>"><? echo $siteUrl . $progress->get('INSTALL_ADMIN_PATH') ?></a>
+            <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>/<?php echo  $progress->get('INSTALL_ADMIN_PATH') ?>/"><? echo  $progress->get('INSTALL_ADMIN_PATH') ?></a>
             <br>
             login: admin<br>
             пароль: 1111<br>
@@ -850,7 +853,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
         }
         ?>
 
-        <div class="row install-form" style="<?php echo $progress->hasErrors() !== null ? 'display:none' : '' ?>">
+        <div class="row install-form" style="<?php echo ($progress->hasErrors() === null or $progress->hasErrors() === true) ? '' : 'display:none' ?>">
 
           <p>Для встановлення системи вам необхідно всього навсього заповнити невелику форму нижче</p>
 
