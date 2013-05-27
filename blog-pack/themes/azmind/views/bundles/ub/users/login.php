@@ -1,22 +1,19 @@
-<div class="full_w">
+<div class="full-post">
 
-  <form action="" method="post">
+  <form action="" id="commentform" method="post" id="commentform">
 
-    <div class="element">
-      <label for="name">Login <span class="red">(required)</span></label>
+    <p>
       <input id="name" name="login" class="text" value="" required/>
-    </div>
+      <label for="name">Логін <span class="red">(required)</span></label>
+    </p>
 
-    <div class="element">
-      <label for="name">Password <span class="red">(required)</span></label>
+    <p>
       <input id="name" name="password" class="text" type="password" value="" required/>
-    </div>
+      <label for="name">Пароль <span class="red">(required)</span></label>
+    </p>
 
-
-    <div class="entry">
-      <button type="submit" class="login">Login</button>
-    </div>
+    <p>
+      <input type="submit" class="cbutton" value="Ввійти" tabindex="5" id="submit" name="submit">
+    </p>
   </form>
-
-
 </div>
