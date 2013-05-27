@@ -15,12 +15,6 @@
     const STATUS_DELETED = 2;
 
 
-    protected function relations() {
-      return array(
-        'post' => array(self::ONE_TO_ONE, \Ub\Simpleblog\Posts\Table::N, 'post_id')
-      );
-    }
-
     public static function getStatusDescription() {
       return array(
         self::STATUS_PENDING => 'На модерації',

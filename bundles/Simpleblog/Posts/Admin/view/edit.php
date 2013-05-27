@@ -68,7 +68,7 @@
     </div>
 
     <div class="element">
-      <?php $comments = $model->allComments(); ?>
+      <?php $comments = $model->comments; ?>
       <label for="published">Коментарів #<?= count($comments) ?></label>
       <?php foreach ($comments as $comment) { ?>
         <a href="<?= \Uc::app()->url->create('ub/simpleblog/comments/admin/edit', array('pk' => $comment->pk())) ?>" target="_blank">{<?= $comment->status ?>

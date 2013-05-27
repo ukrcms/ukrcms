@@ -60,7 +60,7 @@
      */
     public function actionContact() {
       $message = null;
-      if (empty($_POST['email']) or (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false) ) {
+      if (empty($_POST['email']) or (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false)) {
         $message = 'Поле email заповнено невірно';
       }
       if (!$message  and empty($_POST['message'])) {

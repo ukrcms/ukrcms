@@ -1,7 +1,7 @@
 <?php
-if (empty($pages)) {
-  return false;
-}
+  if (empty($pages)) {
+    return false;
+  }
 
 ?>
 <div class="pagination">
