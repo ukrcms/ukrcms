@@ -101,6 +101,7 @@
         $url = $_SERVER['REQUEST_URI'];
 
         if (!empty($this->baseUrl)) {
+          $this->baseUrl = rtrim($this->baseUrl, '/');
           $this->requestUrl = preg_replace('!^' . $this->baseUrl . '!', '', $url);
         } else {
           $this->requestUrl = $url;

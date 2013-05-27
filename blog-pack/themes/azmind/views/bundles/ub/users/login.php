@@ -1,6 +1,6 @@
 <div class="full-post">
 
-  <form action="" id="commentform" method="post" >
+  <form action="" id="commentform" method="post" id="commentform">
 
     <p>
       <input id="name" name="login" class="text" value="" required/>
