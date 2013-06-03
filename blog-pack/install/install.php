@@ -916,7 +916,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
 
             <div class="slat-12">
               <div class="slat-4">
-                Розсташування сайту:
+                Розташування сайту:
               </div>
               <div class="slat-2 hint--right" data-hint="Якщо сайт розміщується не в кореневому каталозі веб-сервера">
 
