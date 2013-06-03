@@ -15,20 +15,6 @@
      */
     const N = __CLASS__;
 
-    /**
-     * Relation constant One to One
-     */
-    const ONE_TO_ONE = 1;
-
-    /**
-     * Relation constant One to Many
-     */
-    const ONE_TO_MANY = 2;
-
-    /**
-     * Relation constant Many to Many
-     */
-    const MANY_TO_MANY = 3;
 
     /**
      * Data that is stored in row
@@ -62,7 +48,16 @@
      */
     private $deleteRelationsWithEntities = array();
 
+    /**
+     * @var \Uc\Db\Table
+     */
     protected $table = null;
+
+    /**
+     *
+     * @var array
+     */
+    private $relationsCache = array();
 
     /**
      *
@@ -82,20 +77,12 @@
         $this->setFromArray($config['data']);
       }
 
+      $this->relationsCache = $this->table->relations();
       $this->init();
     }
 
-    public function __call($name, $arguments) {
-      $relation = $this->relations();
-      if (!empty($relation) and isset($relation[$name])) {
-        return $this->getRelatedObject($relation[$name]);
-      } else {
-        throw new \Exception('Can not call method ' . $name . '()');
-      }
-    }
-
     public function __set($name, $value) {
-      if ($this->getTable()->hasColumn($name)) {
+      if ($this->table->hasColumn($name)) {
         $this->data[$name] = $value;
         $this->columnChanged[$name] = true;
       } else {
@@ -104,7 +91,7 @@
     }
 
     public function __isset($name) {
-      if ($this->getTable()->hasColumn($name)) {
+      if ($this->table->hasColumn($name)) {
         return isset($this->data[$name]);
       } else {
         return false;
@@ -112,22 +99,16 @@
     }
 
     public function __get($name) {
-      if ($this->getTable()->hasColumn($name)) {
+      if ($this->table->hasColumn($name)) {
         return isset($this->data[$name]) ? $this->data[$name] : false;
-      } else {
-        throw new \Exception('Can not get property ' . $name);
+      } elseif (isset($this->relationsCache[$name])) {
+        $this->{$name} = $this->getRelatedObject($this->relationsCache[$name]);
+        return $this->{$name};
       }
+      throw new \Exception('Can not get property ' . $name);
     }
 
     protected function init() {
-
-    }
-
-    /**
-     *
-     * @return array
-     */
-    protected function relations() {
 
     }
 
@@ -157,15 +138,17 @@
     private function getRelatedObject($relationParams) {
       $tableClassName = $relationParams[1];
 
+      /** @var $table \Uc\Db\Table */
       $table = $tableClassName::instance();
-      if ($relationParams[0] == self::ONE_TO_ONE) {
+
+      if ($relationParams[0] == $table::RELATION_ONE_TO_ONE) {
         $pkField = $this->{$relationParams[2]};
         $item = $table->fetchOne($pkField);
         return $item;
-      } elseif ($relationParams[0] == self::ONE_TO_MANY) {
+      } elseif ($relationParams[0] == $table::ONE_TO_MANY) {
         $items = $table->fetchAll(array($relationParams[2] => $this->pk()));
         return $items;
-      } elseif ($relationParams[0] == self::MANY_TO_MANY) {
+      } elseif ($relationParams[0] == $table::MANY_TO_MANY) {
         $select = $table->select();
         $relatedTableInfo = explode(',', $relationParams[2]);
         $select->join('left join ' . trim($relatedTableInfo[0]) . ' on ' . $relatedTableInfo[0] . '.' . trim($relatedTableInfo[2]) . '=' . $table->getTableName() . '.id');
@@ -185,8 +168,7 @@
      * @throws \Exception
      */
     public function addRelatedObject($relationName, $object) {
-      $relation = $this->relations();
-      if (!empty($relation) and isset($relation[$relationName])) {
+      if (isset($this->relationsCache[$relationName])) {
         $this->addedRelatedEntities[$relationName][] = $object;
       } else {
         throw new \Exception('Can`t add related. Relation #' . $relationName . ' does not exists in entity #' . get_class($this));
@@ -204,8 +186,7 @@
         throw new \Exception('Can nod delete relations. Entity is new.');
       }
 
-      $relation = $this->relations();
-      if (!empty($relation) and isset($relation[$relationName])) {
+      if (isset($this->relationsCache[$relationName])) {
         $this->deleteRelationsWithEntities[$relationName][] = $object;
       } else {
         throw new \Exception('Can`t delete connection. Relation #' . $relationName . ' does not exists in entity #' . get_class($this));
@@ -215,20 +196,19 @@
     /**
      * Set data from array.
      *
-     * @author  Ivan Scherbak <dev@funivan.com> 7/24/12 4:53 PM
-     * @param type $data
+     * @author  Ivan Scherbak <dev@funivan.com>
+     * @param array $data
      */
     public function setFromArray($data) {
-      if (!empty($this->data)) {
-        foreach ($data as $key => $value) {
-          if (!isset($this->data[$key]) or $this->data[$key] != $value) {
+      foreach ($data as $key => $value) {
+        if ($this->table->hasColumn($key)) {
+          if (isset($this->data[$key]) and $this->data[$key] != $value) {
             $this->columnChanged[$key] = true;
           }
+          $this->data[$key] = $value;
+        } else {
+          $this->$key = $value;
         }
-
-        $this->data = array_merge($this->data, $data);
-      } else {
-        $this->data = $data;
       }
     }
 
@@ -250,7 +230,7 @@
 
         if (!empty($this->columnChanged) or $this->stored == false) {
 
-          $table = $this->getTable();
+          $table = $this->table;
 
           # insert or update
 
@@ -258,10 +238,10 @@
             # do Update of entity
             $pk = $this->pk();
             $fields = array_intersect_key($this->data, $this->columnChanged);
-            $result = $this->getTable()->update($fields, $pk);
+            $result = $this->table->update($fields, $pk);
           } else {
             # do Insert of entity
-            $result = $this->getTable()->insert($this->data);
+            $result = $this->table->insert($this->data);
 
             if ($result != false) {
               # set primary key for entity
@@ -309,11 +289,11 @@
 
         # begin transaction
         $transactionKey = md5(microtime() . rand(0, 10)) . get_class($this);
-        $adapter = $this->getTable()->getAdapter();
+        $adapter = $this->table->getAdapter();
         $adapter->startTransaction($transactionKey);
 
         if ($this->stored != true) {
-          throw new \Exception('Can not delete ' . get_class($this) . 'becourse it is not stored in database');
+          throw new \Exception('Can not delete ' . get_class($this) . 'because it is not stored in database');
         }
 
         if (!$this->beforeDelete()) {
@@ -324,7 +304,7 @@
 //        $this->deleteAllRelations();
 //        $this->deleteEntityRelations();
 
-        $result = $this->getTable()->delete($this->pk());
+        $result = $this->table->delete($this->pk());
 
         $this->afterDelete();
 
@@ -376,7 +356,7 @@
      * @param array $relationsNames
      */
     public function deleteAllRelations($relationsNames = array()) {
-      $deleteRelationsKeys = array_keys($this->relations());
+      $deleteRelationsKeys = array_keys($this->relationsCache);
 
       if (!empty($relationsNames)) {
         $deleteRelationsKeys = array_intersect($relationsNames, $deleteRelationsKeys);
@@ -406,15 +386,15 @@
      */
     private function deleteEntityRelations() {
       $defaultRelationKey = 0;
-
-      $entityRelations = $this->relations();
+      $table = $this->table;
+      $entityRelations = $this->relationsCache;
       foreach ($this->deleteRelationsWithEntities as $relationName => $relatedItems) {
         foreach ($relatedItems as $relatedIndex => $relatedItem) {
 
           $relationInfo = $entityRelations[$relationName];
 
           switch ($relationInfo[0]) {
-            case self::MANY_TO_MANY:
+            case $table::RELATION_MANY_TO_MANY:
               # delete many to many relations
 
               $relatedTableInfo = explode(',', $relationInfo[2]);
@@ -429,8 +409,8 @@
               \Uc::app()->db->execute($q, $params);
 
               break;
-            case self::ONE_TO_ONE:
-            case self::ONE_TO_MANY:
+            case $table::RELATION_ONE_TO_ONE:
+            case $table::RELATION_ONE_TO_MANY:
 
               # get relative field name and clean it in
               # connected model
@@ -461,14 +441,14 @@
      * @throws \Exception
      */
     private function saveRelatedEntities() {
-      $entityRelations = $this->relations();
+      $table = $this->table;
       foreach ($this->addedRelatedEntities as $relationName => $relatedItems) {
         foreach ($relatedItems as $relatedIndex => $relatedItem) {
 
-          $relationInfo = $entityRelations[$relationName];
+          $relationInfo = $this->relationsCache[$relationName];
 
           switch ($relationInfo[0]) {
-            case self::MANY_TO_MANY:
+            case $table::RELATION_MANY_TO_MANY:
               # save related item
               $relatedItem->save();
               # save many to many relations
@@ -488,8 +468,8 @@
               $q = 'INSERT INTO `' . $manyToManyTable . '` SET ' . trim($relatedTableInfo[1]) . ' = ? , `' . trim($relatedTableInfo[2]) . '` = ? ';
               \Uc::app()->db->execute($q, $params);
               break;
-            case self::ONE_TO_MANY:
-            case self::ONE_TO_ONE:
+            case $table::RELATION_ONE_TO_MANY:
+            case $table::RELATION_ONE_TO_ONE:
               # for related entity set primary key pf current object
               # this two models now connected
               $relatedEntityFieldName = $relationInfo[2];
@@ -525,7 +505,7 @@
      * @return mixed (integer | string)
      */
     public function pk() {
-      return isset($this->data[$this->getTable()->pk()]) ? $this->data[$this->getTable()->pk()] : false;
+      return isset($this->data[$this->table->pk()]) ? $this->data[$this->table->pk()] : false;
     }
 
   }

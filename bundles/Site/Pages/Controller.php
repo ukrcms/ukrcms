@@ -60,7 +60,7 @@
      */
     public function actionContact() {
       $message = null;
-      if (empty($_POST['email']) or (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false) ) {
+      if (empty($_POST['email']) or (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false)) {
         $message = 'Поле email заповнено невірно';
       }
       if (!$message  and empty($_POST['message'])) {
@@ -71,7 +71,7 @@
         $mailFrom = $_POST['email'];
         $userName = !empty($_POST['name']) ? $_POST['name'] : 'noname';
         $message = $_POST['message'];
-        $subject = "sendFromTheUkrCMSdotCom::ContactForm by user " . $userName;
+        $subject = "[UkrCMS]::[ContactForm] user " . $userName;
         $mailTo = \Ub\Site\Settings\Table::get('adminEmail');
         mail($mailTo, $subject, $message, "From: " . $mailFrom . "\r\n");
 

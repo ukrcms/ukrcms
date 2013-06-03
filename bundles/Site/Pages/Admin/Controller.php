@@ -10,7 +10,7 @@
       return \Ub\Site\Pages\Table::instance();
     }
 
-    public function getPageTemplates(){
+    public function getPageTemplates() {
       \Uc::app()->theme->getModuleFilePath();
     }
   }

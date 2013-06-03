@@ -11,7 +11,20 @@
      * Used for easy support. better refactoring etc
      */
     const N = __CLASS__;
+    /**
+     * Relation constant One to One
+     */
+    const RELATION_ONE_TO_ONE = 1;
 
+    /**
+     * Relation constant One to Many
+     */
+    const RELATION_ONE_TO_MANY = 2;
+
+    /**
+     * Relation constant Many to Many
+     */
+    const RELATION_MANY_TO_MANY = 3;
     /**
      * @var array
      */
@@ -44,6 +57,13 @@
       return $this->tableName;
     }
 
+    /**
+     *
+     * @return array
+     */
+    public function relations() {
+
+    }
 
     public function __construct() {
 
@@ -55,7 +75,7 @@
       foreach ($rawColumnData as $columnInfo) {
 
         if (isset($columnInfo['Field'])) {
-          $this->columns[] = $columnInfo['Field'];
+          $this->columns[$columnInfo['Field']] = true;
         }
 
         if (isset($columnInfo['Key']) and $columnInfo['Key'] == 'PRI') {
@@ -95,7 +115,7 @@
      * @return boolean
      */
     public function hasColumn($columnName) {
-      return in_array($columnName, $this->columns);
+      return isset($this->columns[$columnName]);
     }
 
     /**

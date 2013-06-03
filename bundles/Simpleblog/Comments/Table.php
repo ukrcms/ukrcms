@@ -16,4 +16,8 @@
       return Model::N;
     }
 
+    public function relations() {
+      return array('post' => array(self::RELATION_ONE_TO_ONE, \Ub\Simpleblog\Posts\Table::N, 'post_id'));
+    }
+
   }

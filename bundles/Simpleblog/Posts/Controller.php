@@ -80,7 +80,7 @@
         return $this->actionAddComment($post);
       }
       \Uc::app()->theme->setValue('simpleblog_post_id', $post->pk());
-      \Uc::app()->theme->setValue('simpleblog_category_id', $post->category()->pk());
+      \Uc::app()->theme->setValue('simpleblog_category_id', $post->category->pk());
 
       # set meta tags
       $this->setSeoMetaFromModel($post);

@@ -2,8 +2,6 @@
 
   namespace Ub\Users;
 
-  //use Ub\Users\Table;
-
   /**
    * Class Identity
    *

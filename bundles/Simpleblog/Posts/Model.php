@@ -22,13 +22,6 @@
       parent::init();
     }
 
-    protected function relations() {
-      return array(
-        'category' => array(self::ONE_TO_ONE, \Ub\Simpleblog\Categories\Table::N, 'category_id'),
-        'allComments' => array(self::ONE_TO_MANY, \Ub\Simpleblog\Comments\Table::N, 'post_id'),
-      );
-    }
-
     public function comments() {
       $commentTable = \Ub\Simpleblog\Comments\Table::instance();
       $select = $commentTable->select();

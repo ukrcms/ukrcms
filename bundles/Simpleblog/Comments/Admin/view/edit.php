@@ -4,7 +4,7 @@
 
     <div class="element">
       Коментар до статті:
-      <?php $post = $model->post(); ?>
+      <?php $post = $model->post; ?>
       <a href="<?= $post->getViewUrl() ?>" target="_blank"><?= $post->title ?></a>
     </div>
     <div class="element">
