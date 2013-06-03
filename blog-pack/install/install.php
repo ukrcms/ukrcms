@@ -1,130 +1,133 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
 
 
-class InstallUkrCms {
+  class InstallUkrCms {
 
-  protected $errors = array();
+    protected $errors = array();
 
-  protected $data = array();
+    protected $data = array();
 
-  protected $startInstall = false;
+    protected $startInstall = false;
 
-  public function getData() {
-    return $this->data;
-  }
-
-  public function get($name) {
-    if (isset($this->data[$name])) {
-      return $this->data[$name];
-    } else {
-      return null;
+    public function getData() {
+      return $this->data;
     }
-  }
 
-  public function install() {
-    $this->startInstall = true;
-
-    $fieldsCheck = array(
-      'INSTALL_DB_ADDRESS' => 'Не вказано шлях до сервера бази даних',
-      'INSTALL_DB_NAME' => 'Не вказано назву бази даних',
-      'INSTALL_DB_USER' => 'Не вказано ім\'я користувача',
-      'INSTALL_DB_PASS' => 'Не вказано пароль користувача',
-      'INSTALL_DB_PREFIX' => 'Префікс таблиць не може бути пустий',
-      'INSTALL_ADMIN_PATH' => 'Не вказано шлях до панелі адміністрування',
-      'INSTALL_SITE_PATH' => 'Префікс сайту не може бути пустий',
-    );
-
-    $data = $this->data = $_POST;
-
-    foreach ($fieldsCheck as $field => $error) {
-      if (empty($data[$field])) {
-        $this->errors[] = $error;
+    public function get($name) {
+      if (isset($this->data[$name])) {
+        return $this->data[$name];
+      } else {
+        return null;
       }
     }
 
-    if (!empty($this->errors)) {
-      return false;
-    }
+    public function install() {
+      $this->startInstall = true;
 
-    $data['INSTALL_ADMIN_PATH'] = trim($data['INSTALL_ADMIN_PATH'], '/');
-    $data['INSTALL_SITE_PATH'] = '/' . trim($data['INSTALL_SITE_PATH'], '/');
+      $fieldsCheck = array(
+        'INSTALL_DB_ADDRESS' => 'Не вказано шлях до сервера бази даних',
+        'INSTALL_DB_NAME' => 'Не вказано назву бази даних',
+        'INSTALL_DB_USER' => 'Не вказано ім\'я користувача',
+        'INSTALL_DB_PASS' => 'Не вказано пароль користувача',
+        'INSTALL_DB_PREFIX' => 'Префікс таблиць не може бути пустий',
+        'INSTALL_ADMIN_PATH' => 'Не вказано шлях до панелі адміністрування',
+        'INSTALL_SITE_PATH' => 'Префікс сайту не може бути пустий',
+      );
 
-    $this->data = $data;
+      $data = $this->data = $_POST;
 
-    try {
-      $conn = new PDO('mysql:host=' . $data['INSTALL_DB_ADDRESS'] . ';dbname=' . $data['INSTALL_DB_NAME'], $data['INSTALL_DB_USER'], $data['INSTALL_DB_PASS']);
-      $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    } catch (PDOException $e) {
-      $this->errors[] = 'Неможливо зєднатись з базою даних';
-      $this->errors[] = 'ERROR: ' . $e->getMessage();
-      return false;
-
-    }
-
-    $importData = __DIR__ . '/uc.sql';
-    if (!file_exists($importData)) {
-      $this->errors[] = "Неможливо знайти файл-дамп для бази даних" . $importData;
-      return false;
-    }
-
-    $fileConfig = __DIR__ . '/../protected/config/main.php';
-    if (!file_exists($fileConfig)) {
-      $this->errors[] = 'Неможливо знайти файл конфігурації' . $fileConfig;
-      return false;
-    }
-
-    try {
-      foreach (file($importData) as $line) {
-        $line = trim($line);
-        if (!empty($line)) {
-          $line = str_replace(' `uc_', ' `' . $this->get('INSTALL_DB_PREFIX'), $line);
-          $conn->exec($line);
+      foreach ($fieldsCheck as $field => $error) {
+        if (empty($data[$field])) {
+          $this->errors[] = $error;
         }
       }
-    } catch (PDOException $e) {
-      $this->errors[] = 'Неможливо виконати імпорт бази даних';
-      $this->errors[] = 'ERROR: ' . $e->getMessage();
-      return false;
+
+      $configFilePartialPath = 'protected/config/main.php';
+      $fileConfig = __DIR__ . '/../' . $configFilePartialPath;
+
+      if (!file_exists($fileConfig)) {
+        $this->errors[] = 'Неможливо знайти файл конфігурації ' . $configFilePartialPath;
+      } elseif (!is_writable($fileConfig)) {
+        $this->errors[] = 'Файл конфігурації має бути доступний для запису (chmod 0777 ' . $configFilePartialPath . ')';
+      }
+
+      if (!empty($this->errors)) {
+        return false;
+      }
+
+      $data['INSTALL_ADMIN_PATH'] = trim($data['INSTALL_ADMIN_PATH'], '/');
+      $data['INSTALL_SITE_PATH'] = '/' . trim($data['INSTALL_SITE_PATH'], '/');
+
+      $this->data = $data;
+
+      try {
+        $conn = new PDO('mysql:host=' . $data['INSTALL_DB_ADDRESS'] . ';dbname=' . $data['INSTALL_DB_NAME'], $data['INSTALL_DB_USER'], $data['INSTALL_DB_PASS']);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+      } catch (PDOException $e) {
+        $this->errors[] = 'Неможливо зєднатись з базою даних';
+        $this->errors[] = 'ERROR: ' . $e->getMessage();
+        return false;
+
+      }
+
+      $importData = __DIR__ . '/uc.sql';
+      if (!file_exists($importData)) {
+        $this->errors[] = "Неможливо знайти файл-дамп для бази даних" . $importData;
+        return false;
+      }
+
+      try {
+        foreach (file($importData) as $line) {
+          $line = trim($line);
+          if (!empty($line)) {
+            $line = str_replace(' `uc_', ' `' . $this->get('INSTALL_DB_PREFIX'), $line);
+            $conn->exec($line);
+          }
+        }
+      } catch (PDOException $e) {
+        $this->errors[] = 'Неможливо виконати імпорт бази даних';
+        $this->errors[] = 'ERROR: ' . $e->getMessage();
+        return false;
+      }
+
+      $fileContent = file_get_contents($fileConfig);
+      if ($fileContent === false) {
+        $this->errors[] = 'Неможливо прочитати файл конфігурації';
+        return false;
+      }
+
+      foreach ($data as $from => $value) {
+        $fileContent = str_replace($from, $value, $fileContent);
+      }
+
+      if (!file_put_contents($fileConfig, $fileContent)) {
+        $this->errors[] = 'Неможливо зберегти файл конфігурації';
+        return false;
+      }
+
+      return true;
     }
 
-    $fileContent = file_get_contents($fileConfig);
-    if ($fileContent === false) {
-      $this->errors[] = 'Неможливо прочитати файл конфігурації';
-      return false;
+    public function getErrors() {
+      return $this->errors;
     }
 
-    foreach ($data as $from => $value) {
-      $fileContent = str_replace($from, $value, $fileContent);
+    /**
+     * @return array
+     */
+    public function hasErrors() {
+      if ($this->startInstall == false) {
+        return null;
+      }
+      return (count($this->errors) > 0);
     }
 
-    if (!file_put_contents($fileConfig, $fileContent)) {
-      $this->errors[] = 'Неможливо зберегти файл конфігурації';
-      return false;
-    }
-
-    return true;
   }
 
-  public function getErrors() {
-    return $this->errors;
-  }
-
-  /**
-   * @return array
-   */
-  public function hasErrors() {
-    if ($this->startInstall == false) {
-      return null;
-    }
-    return (count($this->errors) > 0);
-  }
-
-}
-
-$progress = new InstallUkrCms();
+  $progress = new InstallUkrCms();
 ?>
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
@@ -732,7 +735,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   background-color: #e6e6e6;
 }
 .btn:active {
-  background-color: #cccccc                                                                                                                \9;
+  background-color: #cccccc                                                                                                                      \9;
 }
 .btn:first-child {
   *margin-left: 0;
@@ -758,7 +761,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   background-color: #e6e6e6;
-  background-color: #d9d9d9                                                                                                                \9;
+  background-color: #d9d9d9                                                                                                                      \9;
   outline: 0;
 }
 .btn[disabled] {
@@ -818,39 +821,39 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
       <div class="top-mast contact-top-mast">
         <h1>Встановлення UkrCms</h1>
         <?php
-        $sitePath = '/';
-        if ($progress->get('INSTALL_SITE_PATH') != null) {
-          $sitePath = $progress->get('INSTALL_SITE_PATH');
-        } elseif (!empty($_SERVER['REQUEST_URI'])) {
-          $sitePath = preg_replace('!install/' . basename(__FILE__) . '[\?.]*$!', '$1', $_SERVER['REQUEST_URI']);
-          $sitePath = rtrim($sitePath, "/");
-        }
-
-        $siteUrl = $_SERVER['SERVER_NAME'] . $sitePath;
-
-        if (!empty($_POST)) {
-          if ($progress->install()) {
-            ?>
-            Вітаю, Ваш сайт успішно інстальовано<br>
-            Ось дані для адміністрування вашого сайту:<br><br>
-
-            Сайт:
-            <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>"><?php echo $progress->get('INSTALL_SITE_PATH'); ?></a>
-            <br>
-            Панель адміністрування:
-            <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>/<?php echo  $progress->get('INSTALL_ADMIN_PATH') ?>/"><? echo  $progress->get('INSTALL_ADMIN_PATH') ?></a>
-            <br>
-            login: admin<br>
-            пароль: 1111<br>
-          <?php } else { ?>
-            <ul>
-              <?php foreach ($progress->getErrors() as $error) { ?>
-                <li style="color: #ca5427"><?php echo $error ?></li>
-              <?php } ?>
-            </ul>
-          <?php
+          $sitePath = '/';
+          if ($progress->get('INSTALL_SITE_PATH') != null) {
+            $sitePath = $progress->get('INSTALL_SITE_PATH');
+          } elseif (!empty($_SERVER['REQUEST_URI'])) {
+            $sitePath = preg_replace('!install/' . basename(__FILE__) . '[\?.]*$!', '$1', $_SERVER['REQUEST_URI']);
+            $sitePath = rtrim($sitePath, "/");
           }
-        }
+
+          $siteUrl = $_SERVER['SERVER_NAME'] . $sitePath;
+
+          if (!empty($_POST)) {
+            if ($progress->install()) {
+              ?>
+              Вітаю, Ваш сайт успішно інстальовано<br>
+              Ось дані для адміністрування вашого сайту:<br><br>
+
+              Сайт:
+              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>"><?php echo $progress->get('INSTALL_SITE_PATH'); ?></a>
+              <br>
+              Панель адміністрування:
+              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>/<?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/"><? echo $progress->get('INSTALL_ADMIN_PATH') ?></a>
+              <br>
+              login: admin<br>
+              пароль: 1111<br>
+            <?php } else { ?>
+              <ul>
+                <?php foreach ($progress->getErrors() as $error) { ?>
+                  <li style="color: #ca5427"><?php echo $error ?></li>
+                <?php } ?>
+              </ul>
+            <?php
+            }
+          }
         ?>
 
         <div class="row install-form" style="<?php echo ($progress->hasErrors() === null or $progress->hasErrors() === true) ? '' : 'display:none' ?>">
