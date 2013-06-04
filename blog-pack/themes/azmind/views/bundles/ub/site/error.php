@@ -2,6 +2,6 @@
   <h2>Упс</h2>
 
   <p>
-    <?= $message ?>
+    <?php echo $message ?>
   </p>
 </div>

@@ -3,11 +3,11 @@
 
     <div class="element">
       <label for="name">Логін <span class="red">(обов'язково)</span></label>
-      <input id="name" name="data[login]" class="text" value="<?= $model->login ?>" required/>
+      <input id="name" name="data[login]" class="text" value="<?php echo $model->login ?>" required/>
     </div>
     <div class="element">
       <label for="name">Імя </label>
-      <input id="name" name="data[name]" class="text" value="<?= $model->name ?>"/>
+      <input id="name" name="data[name]" class="text" value="<?php echo $model->name ?>"/>
     </div>
 
 

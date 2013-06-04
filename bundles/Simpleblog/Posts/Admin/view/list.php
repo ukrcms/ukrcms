@@ -16,7 +16,7 @@
 <div class="entry" style="text-align: center;">
   <?php foreach (array(30, 50, 100, 500) as $onPage) { ?>
     <a
-      href="<?= \Uc::app()->url->create(\Uc::app()->url->getRoute(), array('onPage' => $onPage, 'page' => 1)) ?>"
+      href="<?php echo \Uc::app()->url->create(\Uc::app()->url->getRoute(), array('onPage' => $onPage, 'page' => 1)) ?>"
       class="<?php echo (!empty($_GET['onPage']) and $onPage == $_GET['onPage']) ? 'current' : '' ?>"
       ><?php echo $onPage ?></a>&nbsp;
   <?php } ?>

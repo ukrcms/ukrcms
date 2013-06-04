@@ -8,17 +8,17 @@
     <?php } ?>
     <div class="element">
       <label for="meta_title">Meta title <span class="red">(обов'язково)</span></label>
-      <input id="meta_title" name="data[meta_title]" class="text" value="<?= $model->meta_title ?>" required/>
+      <input id="meta_title" name="data[meta_title]" class="text" value="<?php echo $model->meta_title ?>" required/>
     </div>
 
     <div class="element">
       <label for="meta_description">Meta Desctiption</label>
-      <textarea id="meta_description" name="data[meta_description]" class="textarea" rows="10"><?= $model->meta_description ?></textarea>
+      <textarea id="meta_description" name="data[meta_description]" class="textarea" rows="10"><?php echo $model->meta_description ?></textarea>
     </div>
 
     <div class="element">
       <label for="meta_keywords">Meta Keywords</label>
-      <textarea id="meta_keywords" name="data[meta_keywords]" class="textarea" rows="10"><?= $model->meta_keywords ?></textarea>
+      <textarea id="meta_keywords" name="data[meta_keywords]" class="textarea" rows="10"><?php echo $model->meta_keywords ?></textarea>
     </div>
 
 

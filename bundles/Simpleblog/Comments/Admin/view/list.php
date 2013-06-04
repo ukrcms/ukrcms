@@ -8,9 +8,9 @@
 
   <div class="full_w">
     <div class="entry filter-link">
-      <a href="<?= \Uc::app()->url->create($listRoute) ?>" class="<?= $statusRequest === null ? 'current' : '' ?>">Усі</a>
+      <a href="<?php echo \Uc::app()->url->create($listRoute) ?>" class="<?php echo $statusRequest === null ? 'current' : '' ?>">Усі</a>
       <?php foreach (\Ub\Simpleblog\Comments\Model::getStatusDescription() as $status => $statusName) { ?>
-        <a href="<?= \Uc::app()->url->create($listRoute, array('-w-status' => $status)) ?>" class="<?= $statusRequest === $status ? 'current' : '' ?>"><?= $statusName ?></a>
+        <a href="<?php echo \Uc::app()->url->create($listRoute, array('-w-status' => $status)) ?>" class="<?php echo $statusRequest === $status ? 'current' : '' ?>"><?php echo $statusName ?></a>
       <?php } ?>
       <div class="sep"></div>
     </div>

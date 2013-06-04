@@ -1,13 +1,13 @@
 <div class="full-post">
 
   <h2 class="full-post-title">
-    <?= $model->title ?>
+    <?php echo $model->title ?>
   </h2>
 
 
 
   <div class="full-post-content">
-    <?= $model->text ?>
+    <?php echo $model->text ?>
   </div>
 
   <div class="clearfix"></div>
