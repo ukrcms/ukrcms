@@ -5,9 +5,9 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="author" content="Pawe? 'kilab' Balicki - kilab.pl"/>
     <title>SimpleAdmin</title>
-    <link rel="stylesheet" type="text/css" href="<?= \Uc::app()->theme->getUrl() ?>/css/style.css" media="screen"/>
-    <link rel="stylesheet" type="text/css" href="<?= \Uc::app()->theme->getUrl() ?>/css/navi.css" media="screen"/>
-    <script type="text/javascript" src="<?= \Uc::app()->theme->getUrl() ?>/js/jquery-1.7.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo \Uc::app()->theme->getUrl() ?>/css/style.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo \Uc::app()->theme->getUrl() ?>/css/navi.css" media="screen"/>
+    <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript">
       $(function () {
         $(".box .h_title").each(function () {
@@ -37,15 +37,15 @@
       <div id="header">
         <div id="top" style="">
 
-          <? if (\Uc::app()->userIdentity->isLogin()) { ?>
+          <?php if (\Uc::app()->userIdentity->isLogin()) { ?>
             <div class="left">
-              <p>Привіт, <strong><? echo(\Uc::app()->userIdentity->getUser()->name); ?></strong> [
-                <a href=" <?= \Uc::app()->url->create(\Uc::app()->userIdentity->getLogoutRoute()); ?>">вихід</a> ]</p>
+              <p>Привіт, <strong><?php echo (\Uc::app()->userIdentity->getUser()->name); ?></strong> [
+                <a href=" <?php echo \Uc::app()->url->create(\Uc::app()->userIdentity->getLogoutRoute()); ?>">вихід</a> ]</p>
             </div>
-          <? } ?>
+          <?php } ?>
           <div class="right">
             <div class="align-right">
-              <p>Time: <strong><?= strftime('%Y-%m-%d %H:%M:%S') ?></strong></p>
+              <p>Time: <strong><?php echo strftime('%Y-%m-%d %H:%M:%S') ?></strong></p>
             </div>
           </div>
 
@@ -90,7 +90,7 @@
           <?php if (!empty($this->leftMenu)) { ?>
             <?php foreach ($this->leftMenu as $sectionName => $items) { ?>
               <div class="box">
-                <div class="h_title">&#8250; <?= $sectionName ?></div>
+                <div class="h_title">&#8250; <?php echo $sectionName ?></div>
 
                 <ul>
                   <?php foreach ($items as $href => $info) { ?>
@@ -104,10 +104,10 @@
                       $icon = $info['icon'];
                     }
                     ?>
-                    <li class="b <?= !empty($info['current']) ? 'current' : '' ?>"><a class="icon <?= $icon ?>"
-                                                                                      href="<?= $href ?>"><?= $text ?></a>
+                    <li class="b <?php echo !empty($info['current']) ? 'current' : '' ?>"><a class="icon <?php echo $icon ?>"
+                                                                                      href="<?php echo $href ?>"><?php echo $text ?></a>
                     </li>
-                  <? } ?>
+                  <?php } ?>
                 </ul>
               </div>
             <?php } ?>
@@ -116,7 +116,7 @@
 
         <div id="main">
 
-          <?= $content ?>
+          <?php echo $content ?>
 
           <div class="clear"></div>
 
@@ -135,11 +135,11 @@
       </div>
     </div>
 
-    <script type="text/javascript" src="<?= \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.js"></script>
-    <script src="<?= \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/uploader-1.0/jquery.cleditor.uploader-1.0.js"></script>
-    <script src="<?= \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/replacer-1.0/jquery.cleditor.replacer-1.0.js"></script>
-    <script src="<?= \Uc::app()->theme->getUrl() ?>/js/ukrTranslit-1.0/jquery.ukrTranslit.js"></script>
-    <link rel="stylesheet" href="<?= \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.css"/>
+    <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.js"></script>
+    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/uploader-1.0/jquery.cleditor.uploader-1.0.js"></script>
+    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/replacer-1.0/jquery.cleditor.replacer-1.0.js"></script>
+    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/ukrTranslit-1.0/jquery.ukrTranslit.js"></script>
+    <link rel="stylesheet" href="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.css"/>
     <script type="text/javascript">
       $(document).ready(function () {
         $('#title').ukrTranslit('#sef');

@@ -841,7 +841,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
               <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>"><?php echo $progress->get('INSTALL_SITE_PATH'); ?></a>
               <br>
               Панель адміністрування:
-              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>/<?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/"><? echo $progress->get('INSTALL_ADMIN_PATH') ?></a>
+              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>/<?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/"><?php echo $progress->get('INSTALL_ADMIN_PATH') ?></a>
               <br>
               login: admin<br>
               пароль: 1111<br>

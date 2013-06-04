@@ -27,11 +27,11 @@
               </td>
             <?php } ?>
             <td>
-              <a href="<?= \Uc::app()->url->create($editRoute, array('pk' => $item->pk())) ?>" class="table-icon edit" title="Редагувати"></a>
-              <a href="<?= \Uc::app()->url->create($deleteRoute, array('pk' => $item->pk())) ?>" class="table-icon delete confirm" title="Видалити"></a>
+              <a href="<?php echo \Uc::app()->url->create($editRoute, array('pk' => $item->pk())) ?>" class="table-icon edit" title="Редагувати"></a>
+              <a href="<?php echo \Uc::app()->url->create($deleteRoute, array('pk' => $item->pk())) ?>" class="table-icon delete confirm" title="Видалити"></a>
             </td>
           </tr>
-        <? } ?>
+        <?php } ?>
 
         </tbody>
       </table>
@@ -52,7 +52,7 @@
     <?php } ?>
     <?php if ($addRoute = $this->getAddRoute() and !empty($addRoute)) { ?>
       <div class="entry">
-        <a class="button add" href="<?= \Uc::app()->url->create($addRoute) ?>">Додати</a>
+        <a class="button add" href="<?php echo \Uc::app()->url->create($addRoute) ?>">Додати</a>
       </div>
     <?php } ?>
   </div>

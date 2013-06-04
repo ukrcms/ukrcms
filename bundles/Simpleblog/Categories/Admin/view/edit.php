@@ -12,40 +12,40 @@
 
     <div class="element">
       <label for="title">Заголовок <span class="red">(обов'язково)</span></label>
-      <input id="title" name="data[title]" class="text" value="<?= $model->title ?>" required/>
+      <input id="title" name="data[title]" class="text" value="<?php echo $model->title ?>" required/>
     </div>
 
     <div class="element">
       <label for="sef">Посилання <span class="red">(обов'язково)</span></label>
-      <input id="sef" name="data[sef]" class="text" value="<?= $model->sef ?>" required/>
+      <input id="sef" name="data[sef]" class="text" value="<?php echo $model->sef ?>" required/>
     </div>
 
     <div class="element">
       <label for="description">Опис категорії</label>
-      <textarea id="description" name="data[description]" class="textarea" rows="10"><?= $model->description ?></textarea>
+      <textarea id="description" name="data[description]" class="textarea" rows="10"><?php echo $model->description ?></textarea>
     </div>
 
     <div class="entry"></div>
 
     <div class="element">
       <label for="meta_description">SEO опис</label>
-      <textarea id="meta_description" name="data[meta_description]" class="textarea" rows="10"><?= $model->meta_description ?></textarea>
+      <textarea id="meta_description" name="data[meta_description]" class="textarea" rows="10"><?php echo $model->meta_description ?></textarea>
     </div>
 
     <div class="element">
       <label for="meta_keywords">SEO Ключові слова</label>
-      <textarea id="meta_keywords" name="data[meta_keywords]" class="textarea" rows="10"><?= $model->meta_keywords ?></textarea>
+      <textarea id="meta_keywords" name="data[meta_keywords]" class="textarea" rows="10"><?php echo $model->meta_keywords ?></textarea>
     </div>
 
 
     <div class="element">
       <label for="published">Показувати на сайті</label>
       <label>
-        <input type="radio" name="data[status]" value="<?= \Ub\Simpleblog\Categories\Model::STATUS_ENABLED ?>" <?= $model->status == \Ub\Simpleblog\Categories\Model::STATUS_ENABLED ? 'checked="checked"' : '' ?> />
+        <input type="radio" name="data[status]" value="<?php echo \Ub\Simpleblog\Categories\Model::STATUS_ENABLED ?>" <?php echo $model->status == \Ub\Simpleblog\Categories\Model::STATUS_ENABLED ? 'checked="checked"' : '' ?> />
         Так
       </label>
       <label>
-        <input type="radio" name="data[status]" value="<?= \Ub\Simpleblog\Categories\Model::STATUS_DISABLED ?>" <?= $model->status == \Ub\Simpleblog\Categories\Model::STATUS_DISABLED ? 'checked="checked"' : '' ?> />
+        <input type="radio" name="data[status]" value="<?php echo \Ub\Simpleblog\Categories\Model::STATUS_DISABLED ?>" <?php echo $model->status == \Ub\Simpleblog\Categories\Model::STATUS_DISABLED ? 'checked="checked"' : '' ?> />
         Ні
       </label>
     </div>
