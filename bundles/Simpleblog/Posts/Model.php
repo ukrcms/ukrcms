@@ -2,6 +2,9 @@
   namespace Ub\Simpleblog\Posts;
 
   /**
+   * @property string imageData
+   * @property mixed  date
+   * @property mixed  sef
    * @author Ivan Scherbak <dev@funivan.com>
    */
   class Model extends \Uc\Db\Model {
@@ -45,6 +48,8 @@
       if (empty($this->date)) {
         $this->date = time();
       }
+
+
       return parent::beforeSave();
     }
 
@@ -80,7 +85,7 @@
 
     public function setImage($data) {
       if (!empty($data['tmp_name'])) {
-        $imageObject = new Simpleblog_Posts_Image();
+        $imageObject = new \Ub\Simpleblog\Posts\Image();
         $imageObject->save($_FILES['image']);
         $this->image = $imageObject;
       }
