@@ -145,10 +145,10 @@
         $pkField = $this->{$relationParams[2]};
         $item = $table->fetchOne($pkField);
         return $item;
-      } elseif ($relationParams[0] == $table::ONE_TO_MANY) {
+      } elseif ($relationParams[0] == $table::RELATION_ONE_TO_MANY) {
         $items = $table->fetchAll(array($relationParams[2] => $this->pk()));
         return $items;
-      } elseif ($relationParams[0] == $table::MANY_TO_MANY) {
+      } elseif ($relationParams[0] == $table::RELATION_MANY_TO_MANY) {
         $select = $table->select();
         $relatedTableInfo = explode(',', $relationParams[2]);
         $select->join('left join ' . trim($relatedTableInfo[0]) . ' on ' . $relatedTableInfo[0] . '.' . trim($relatedTableInfo[2]) . '=' . $table->getTableName() . '.id');
