@@ -72,7 +72,7 @@
 
     public static function resize($source, $destination, $maxW, $maxH) {
       // *** 1) Initialise / load image
-      $resizeObj = new Helper_Image_Resize($source);
+      $resizeObj = new \Ub\Helper\Image\Resize($source);
       // *** 2) Resize image (options: exact, portrait, landscape, auto, crop)
       $resizeObj->resizeImage($maxW, $maxH);
       // *** 3) Save image
