@@ -1,0 +1,6 @@
+default:
+  paths:
+    features: .
+    bootstrap: .
+  context:
+    class: MainFeatureContext
