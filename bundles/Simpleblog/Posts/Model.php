@@ -80,7 +80,7 @@
 
     public function setImage($data) {
       if (!empty($data['tmp_name'])) {
-        $imageObject = new Simpleblog_Posts_Image();
+        $imageObject = new \Ub\Simpleblog\Posts\Image();
         $imageObject->save($_FILES['image']);
         $this->image = $imageObject;
       }
