@@ -5,7 +5,7 @@
   $widget->setOptions(array(
     'hideTitle' => true,
     'showFields' => array(
-      'name' => 'title',
+      'Назва' => 'title',
     ),
     'controllerRoute' => \Uc::app()->url->getControllerName()
   ));
