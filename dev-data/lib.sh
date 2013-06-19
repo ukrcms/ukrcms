@@ -1,5 +1,12 @@
 #!/bin/bash
 
+ script_dir (){
+   echo "`dirname $(script_path)`";
+ }
+
+  script_path (){
+    echo "`pwd`/$0";
+  }
 
  store() {
      export ${1}="${*:2}"

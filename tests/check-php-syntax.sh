@@ -1,13 +1,6 @@
 #!/bin/bash
 
-  script_dir (){
-    echo "`dirname $(script_file)`"
-  }
-  script_file (){
-   echo "`pwd`/$0" | sed 's#/./#/#g'
-  }
-
-
+  source `dirname $BASH_SOURCE`/../dev-data/lib.sh
 
   if [ ! -z $1 ] && [ -d $1 ] ; then
    PROJECT_DIR="$1"
