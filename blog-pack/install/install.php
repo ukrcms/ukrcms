@@ -821,7 +821,6 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
       <div class="top-mast contact-top-mast">
         <h1>Встановлення UkrCms</h1>
         <?php
-          $sitePath = '/';
           if ($progress->get('INSTALL_SITE_PATH') != null) {
             $sitePath = $progress->get('INSTALL_SITE_PATH');
           } elseif (!empty($_SERVER['REQUEST_URI'])) {
@@ -829,19 +828,23 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
             $sitePath = rtrim($sitePath, "/");
           }
 
+          if(empty($sitePath)){
+            $sitePath = '/';
+          }
+
           $siteUrl = $_SERVER['SERVER_NAME'] . $sitePath;
 
           if (!empty($_POST)) {
             if ($progress->install()) {
               ?>
-              Вітаю, Ваш сайт успішно інстальовано<br>
+              Вітаю, Ваш сайт успішно встановлено<br>
               Ось дані для адміністрування вашого сайту:<br><br>
 
               Сайт:
               <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>"><?php echo $progress->get('INSTALL_SITE_PATH'); ?></a>
               <br>
               Панель адміністрування:
-              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>/<?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/"><?php echo $progress->get('INSTALL_ADMIN_PATH') ?></a>
+              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?><?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/"><?php echo $progress->get('INSTALL_ADMIN_PATH') ?></a>
               <br>
               login: admin<br>
               пароль: 1111<br>

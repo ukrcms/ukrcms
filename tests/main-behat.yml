@@ -4,3 +4,7 @@ default:
     bootstrap: .
   context:
     class: MainFeatureContext
+  extensions:
+    Behat\MinkExtension\Extension:
+      goutte: ~
+      selenium2: ~
