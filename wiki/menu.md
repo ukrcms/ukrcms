@@ -1,8 +1,8 @@
 Меню
 ======================
-*  [Швидкий старт](/cookbook/index)
-*  [Пакунки](/bundles/index)
-*  [Класи](/classes/index)
-*  [Розвиток](/contributing/index)
-*  [Словник термінів](/glossary)
+*  [Швидкий старт](cookbook/index.md)
+*  [Пакунки](bundles/index.md)
+*  [Класи](classes/index.md)
+*  [Розвиток](contributing/index.md)
+*  [Словник термінів](glossary.md)
 
