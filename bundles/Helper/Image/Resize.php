@@ -168,18 +168,33 @@
     }
 
     private function getSizeByAuto($newWidth, $newHeight) {
+      if ($this->width <= $newHeight and $this->height <= $newHeight) {
+        $optimalWidth  = $this->width;
+        $optimalHeight = $this->height;
+      } elseif ($this->height < $this->width) {
+        // *** Image to be resized is wider (landscape)
+        $optimalWidth  = $newWidth;
+        $optimalHeight = $this->getSizeByFixedWidth($newWidth);
+      } elseif ($this->height > $this->width) {
+        // *** Image to be resized is taller (portrait)
+        $optimalWidth  = $this->getSizeByFixedHeight($newHeight);
+        $optimalHeight = $newHeight;
+      } else {
+        // *** Image to be resizerd is a square
+        if ($newHeight < $newWidth) {
+          $optimalWidth  = $newWidth;
+          $optimalHeight = $this->getSizeByFixedWidth($newWidth);
+        } else if ($newHeight > $newWidth) {
+          $optimalWidth  = $this->getSizeByFixedHeight($newHeight);
+          $optimalHeight = $newHeight;
+        } else {
+          // *** Sqaure being resized to a square
+          $optimalWidth  = $newWidth;
+          $optimalHeight = $newHeight;
+        }
+      }
 
-      $widthRatio = $this->width / $newWidth;
-      $heightRatio = $this->height / $newHeight;
-
-      $compressRatio = max($widthRatio, $heightRatio);
-
-      $result = array(
-        'optimalWidth' => round($this->width / $compressRatio),
-        'optimalHeight' => round($this->height / $compressRatio)
-      );
-
-      return $result;
+      return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
     }
 
     private function getOptimalCrop($newWidth, $newHeight) {
@@ -205,7 +220,6 @@
       $cropStartY = ($optimalHeight / 2) - ($newHeight / 2);
 
       $crop = $this->imageResized;
-      //imagedestroy($this->imageResized);
       // *** Now crop from center to exact requested size
       $this->imageResized = imagecreatetruecolor($newWidth, $newHeight);
       imagecopyresampled($this->imageResized, $crop, 0, 0, $cropStartX, $cropStartY, $newWidth, $newHeight, $newWidth, $newHeight);
