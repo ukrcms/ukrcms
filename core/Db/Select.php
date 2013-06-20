@@ -6,6 +6,8 @@
    */
   class Select {
 
+    const N = __CLASS__;
+
     protected $table = null;
 
     protected $tableName = false;
@@ -43,8 +45,14 @@
 
       $this->tableName = $this->table->getTableName();
       $this->selectCols = array($this->tableName . '.*');
+
+      $this->init();
     }
 
+
+    protected function init() {
+
+    }
 
     public function getAdapter() {
       return \Uc::app()->db;

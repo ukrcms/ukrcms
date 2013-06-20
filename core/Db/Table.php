@@ -39,6 +39,8 @@
 
     protected $modelClass = '';
 
+    protected $selectClass = \Uc\Db\Select::N;
+
     protected static $tableInstances = array();
 
     public function setModelClass($modelClass) {
@@ -106,7 +108,8 @@
      * @return \Uc\Db\Select
      */
     public function select() {
-      return new \Uc\Db\Select($this);
+      $selectClassName = $this->selectClass;
+      return new $selectClassName($this);
     }
 
     /**
