@@ -5,12 +5,6 @@
 
   class Main extends MinkContext {
 
-    /**
-     * @BeforeScenario
-     */
-    public function before($event) {
-//      $this->setMinkParameter('base_url', TEST_SUBDIR_INSTALLER_URL);
-    }
 
     public function initDirectoryOptions() {
       $this->setMinkParameter('base_url', TEST_SUBDIR_INSTALLER_URL);
@@ -30,7 +24,7 @@
       if ($type == 'domain') {
         $this->initDomainOptions();
       } elseif ($type == 'directory') {
-        $this->initDomainOptions();
+        $this->initDirectoryOptions();
       } else {
         throw new \Exception('Not valid type check');
       }
@@ -45,6 +39,33 @@
 
       $packageFilePath = PACKAGES_DIR . '/' . $pack;
       shell_exec('unzip ' . $packageFilePath . ' -d ' . $dir);
+    }
+
+    /**
+     * @When /^I fill form with test data and admin url "([^"]+)"$/
+     */
+    public function iFillFormWithTestData($adminUrl) {
+      $fieldsData = array(
+        'INSTALL_DB_ADDRESS' => TEST_DB_HOST,
+        'INSTALL_DB_NAME' => TEST_DB_NAME,
+        'INSTALL_DB_USER' => TEST_DB_USER,
+        'INSTALL_DB_PASS' => TEST_DB_PASS,
+        'INSTALL_DB_PREFIX' => 'uc_',
+        'INSTALL_ADMIN_PATH' => $adminUrl,
+        'INSTALL_SITE_PATH' => null,
+      );
+
+      $url = $this->getMinkParameter('base_url');
+
+      $urlData = parse_url($url);
+      $path = !empty($urlData['path']) ? $urlData['path'] : '/';
+
+      $fieldsData['INSTALL_SITE_PATH'] = $path;
+
+      foreach ($fieldsData as $name => $value) {
+        $this->fillField($name, $value);
+      }
+
     }
 
   }

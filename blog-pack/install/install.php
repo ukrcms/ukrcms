@@ -125,6 +125,28 @@
       return (count($this->errors) > 0);
     }
 
+    public function getAdminPath() {
+      if ($this->get('INSTALL_ADMIN_PATH') != null) {
+        return $this->get('INSTALL_ADMIN_PATH');
+      }
+
+      $defaultAdminPanels = array(
+        'admin',
+        'manager',
+        'manage',
+        'panel',
+        'office',
+        'adm-panel',
+        'adm',
+      );
+
+      shuffle($defaultAdminPanels);
+
+      $randomName = current($defaultAdminPanels);
+
+      return '/' . ($randomName . rand(11, 999));
+    }
+
   }
 
   $progress = new InstallUkrCms();
@@ -828,11 +850,10 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
             $sitePath = rtrim($sitePath, "/");
           }
 
-          if(empty($sitePath)){
+          if (empty($sitePath)) {
             $sitePath = '/';
           }
 
-          $siteUrl = $_SERVER['SERVER_NAME'] . $sitePath;
 
           if (!empty($_POST)) {
             if ($progress->install()) {
@@ -841,12 +862,13 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
               Ось дані для адміністрування вашого сайту:<br><br>
 
               Сайт:
-              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?>"><?php echo $progress->get('INSTALL_SITE_PATH'); ?></a>
+              <a href="<?php echo $sitePath ?>">переглянути</a>
               <br>
               Панель адміністрування:
-              <a href="<?php echo $progress->get('INSTALL_SITE_PATH') ?><?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/"><?php echo $progress->get('INSTALL_ADMIN_PATH') ?></a>
+              <a href="<?php echo $sitePath ?><?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/">перейти</a>
               <br>
               login: admin<br>
+
               пароль: 1111<br>
             <?php } else { ?>
               <ul>
@@ -915,7 +937,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
                 Шлях до панелі адміністрування:
               </div>
               <div class="slat-2 hint--right" data-hint="В цілях безпеки вашого сайту задайте шлях по якому буде доступна панель адміністрування. ">
-                <input name="INSTALL_ADMIN_PATH" class="slat-12" type="text" value="<?php echo $progress->get('INSTALL_ADMIN_PATH') ?>">
+                <input name="INSTALL_ADMIN_PATH" class="slat-12" type="text" value="<?php echo $progress->getAdminPath() ?>">
               </div>
             </div>
 
