@@ -66,6 +66,8 @@
         }
       }
 
+      $select->order($table->pk(), 'DESC');
+
       $select = $this->beforeList($select);
 
       $data = $table->fetchPage($select);
