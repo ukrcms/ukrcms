@@ -150,7 +150,7 @@
           'title' => addslashes($item->title),
           'link' => $item->getViewUrl(),
           'description' => htmlspecialchars($image . '<p>' . strip_tags($item->shorttext, '<br><b>') . '</p>'),
-          'pubDate' => "date('r', $item->date)",
+          'pubDate' => date('r', $item->date),
         );
       }
 
