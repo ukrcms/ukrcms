@@ -152,7 +152,7 @@
     /**
      * Set default order
      *
-     * @param type             $field
+     * @param string             $field
      * @param bool|\Uc\Db\type $exp
      * @return $this
      */

@@ -43,12 +43,6 @@
     private $addedRelatedEntities = array();
 
     /**
-     * @todo make delete
-     * @var array
-     */
-    private $deleteRelationsWithEntities = array();
-
-    /**
      * @var \Uc\Db\Table
      */
     protected $table = null;
@@ -113,14 +107,6 @@
     }
 
     /**
-     *
-     * @return array
-     */
-    protected function rules() {
-
-    }
-
-    /**
      * @return \Uc\Db\Table
      */
     public function getTable() {
@@ -160,40 +146,6 @@
     }
 
     /**
-     * In version 0.1 support only \Uc\Db\Model
-     *
-     * @todo make type of second params: array(attributes) or string(primary key).
-     * @param string       $relationName
-     * @param \Uc\Db\Model $object
-     * @throws \Exception
-     */
-    public function addRelatedObject($relationName, $object) {
-      if (isset($this->relationsCache[$relationName])) {
-        $this->addedRelatedEntities[$relationName][] = $object;
-      } else {
-        throw new \Exception('Can`t add related. Relation #' . $relationName . ' does not exists in entity #' . get_class($this));
-      }
-    }
-
-    /**
-     * @todo make $object as string (primary key)
-     * @param string    $relationName
-     * @param Uc_Entity $object
-     * @throws \Exception
-     */
-    public function deleteRelation($relationName, $object) {
-      if ($this->stored() === false) {
-        throw new \Exception('Can nod delete relations. Entity is new.');
-      }
-
-      if (isset($this->relationsCache[$relationName])) {
-        $this->deleteRelationsWithEntities[$relationName][] = $object;
-      } else {
-        throw new \Exception('Can`t delete connection. Relation #' . $relationName . ' does not exists in entity #' . get_class($this));
-      }
-    }
-
-    /**
      * Set data from array.
      *
      * @author  Ivan Scherbak <dev@funivan.com>
@@ -224,10 +176,6 @@
 
         \Uc::app()->db->startTransaction($transactionKey);
 
-        if (!empty($this->deleteRelationsWithEntities)) {
-          $this->deleteEntityRelations();
-        }
-
         if (!empty($this->columnChanged) or $this->stored == false) {
 
           $table = $this->table;
@@ -248,12 +196,12 @@
               /*
                * @todo update full data for Entity.
                * For example we have fields id, name, title, date
-               * date is set automaticaly with database engine
-               * if we make insert in future we whant to get date
+               * date is set automatically with database engine
+               * if we make insert in future we want to get date
                * for this entity.
                * So we need to set date for this model
                * Look up to zend db
-                        */
+               */
 
               # Primary key can be set from modules.
               $pk = $table->pk();
@@ -272,7 +220,6 @@
           }
         }
 
-        $this->saveRelatedEntities();
         # end transaction
         // @todo make rollback
         \Uc::app()->db->endTransaction($transactionKey);
@@ -300,9 +247,6 @@
           $adapter->endTransaction($transactionKey);
           return false;
         }
-
-//        $this->deleteAllRelations();
-//        $this->deleteEntityRelations();
 
         $result = $this->table->delete($this->pk());
 
@@ -349,145 +293,6 @@
 
     }
 
-    /**
-     * Delete all entity relations by default
-     * or only from $relationsNames array
-     *
-     * @param array $relationsNames
-     */
-    public function deleteAllRelations($relationsNames = array()) {
-      $deleteRelationsKeys = array_keys($this->relationsCache);
-
-      if (!empty($relationsNames)) {
-        $deleteRelationsKeys = array_intersect($relationsNames, $deleteRelationsKeys);
-      }
-
-      foreach ($deleteRelationsKeys as $relationName) {
-
-        $relatedItems = $this->$relationName();
-        if (!is_array($relatedItems)) {
-          $relatedItems = array($relatedItems);
-        }
-
-        foreach ($relatedItems as $item) {
-          if ($item instanceof \Uc\Db\Model) {
-            $this->deleteRelation($relationName, $item);
-          }
-        }
-      }
-    }
-
-    /**
-     * Delete only relations with entities. Not entities
-     * Default relation key is 0
-     *
-     *
-     * @throws \Exception
-     */
-    private function deleteEntityRelations() {
-      $defaultRelationKey = 0;
-      $table = $this->table;
-      $entityRelations = $this->relationsCache;
-      foreach ($this->deleteRelationsWithEntities as $relationName => $relatedItems) {
-        foreach ($relatedItems as $relatedIndex => $relatedItem) {
-
-          $relationInfo = $entityRelations[$relationName];
-
-          switch ($relationInfo[0]) {
-            case $table::RELATION_MANY_TO_MANY:
-              # delete many to many relations
-
-              $relatedTableInfo = explode(',', $relationInfo[2]);
-              $manyToManyTable = trim($relatedTableInfo[0]);
-              $params = array(
-                $this->pk(),
-                $relatedItem->pk(),
-              );
-
-              # delete relation with this model
-              $q = 'DELETE FROM `' . $manyToManyTable . '` WHERE ' . trim($relatedTableInfo[1]) . ' = ? and ' . trim($relatedTableInfo[2]) . ' = ? ';
-              \Uc::app()->db->execute($q, $params);
-
-              break;
-            case $table::RELATION_ONE_TO_ONE:
-            case $table::RELATION_ONE_TO_MANY:
-
-              # get relative field name and clean it in
-              # connected model
-              $cleanRelatedField = $relationInfo[2];
-              if ($relatedItem->$cleanRelatedField == $this->pk()) {
-                $relatedItem->$cleanRelatedField = $defaultRelationKey;
-                $relatedItem->save();
-              } else {
-                throw new \Exception('Entity #' . get_class($relatedItem) . ' is not connected to #' . get_class($this));
-              }
-              break;
-            default :
-              throw new \Exception('Relation type is not supported');
-              break;
-          }
-
-          //@todo delete cache of relation entities for $relationName
-          # connection deleted
-          unset($this->deleteRelationsWithEntities[$relationName][$relatedIndex]);
-        }
-      }
-    }
-
-    /**
-     * Main item is stored.
-     * Save related entities and connection
-     *
-     * @throws \Exception
-     */
-    private function saveRelatedEntities() {
-      $table = $this->table;
-      foreach ($this->addedRelatedEntities as $relationName => $relatedItems) {
-        foreach ($relatedItems as $relatedIndex => $relatedItem) {
-
-          $relationInfo = $this->relationsCache[$relationName];
-
-          switch ($relationInfo[0]) {
-            case $table::RELATION_MANY_TO_MANY:
-              # save related item
-              $relatedItem->save();
-              # save many to many relations
-
-              $relatedTableInfo = explode(',', $relationInfo[2]);
-              $manyToManyTable = trim($relatedTableInfo[0]);
-              $params = array(
-                $this->pk(),
-                $relatedItem->pk(),
-              );
-
-              # delete relation with this model
-              $q = 'DELETE FROM `' . $manyToManyTable . '` WHERE ' . trim($relatedTableInfo[1]) . ' = ? and ' . trim($relatedTableInfo[2]) . ' = ? ';
-              \Uc::app()->db->execute($q, $params);
-
-              # insert id`s of two entities in many_many table
-              $q = 'INSERT INTO `' . $manyToManyTable . '` SET ' . trim($relatedTableInfo[1]) . ' = ? , `' . trim($relatedTableInfo[2]) . '` = ? ';
-              \Uc::app()->db->execute($q, $params);
-              break;
-            case $table::RELATION_ONE_TO_MANY:
-            case $table::RELATION_ONE_TO_ONE:
-              # for related entity set primary key pf current object
-              # this two models now connected
-              $relatedEntityFieldName = $relationInfo[2];
-              $relatedItem->$relatedEntityFieldName = $this->pk();
-              $relatedItem->save();
-              break;
-
-            default :
-              throw new \Exception('Relation type is not supported');
-              break;
-          }
-
-          //@todo delete cache of relation entities for $relationName
-          # connection create. Unset from addRelated
-          unset($this->addedRelatedEntities[$relationName][$relatedIndex]);
-        }
-      }
-    }
 
     /**
      * Method used out from entity
@@ -502,7 +307,7 @@
     /**
      * Return primary key value of entity
      *
-     * @return mixed (integer | string)
+     * @return mixed (integer | string | boolean)
      */
     public function pk() {
       return isset($this->data[$this->table->pk()]) ? $this->data[$this->table->pk()] : false;
