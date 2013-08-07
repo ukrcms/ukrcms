@@ -5,7 +5,7 @@
 
 *Для ознайомлення з даним розділом ви маєте знати такі терміни:*
 
-* [Cинглтон](../../glossary#Cинглтон)
-* [Application](../../glossary#Application)
-* [Ядро](../../glossary#Ядро)
+* [Cинглтон](../../glossary.md#Cинглтон)
+* [Application](../../glossary.md#Application)
+* [Ядро](../../glossary.md#Ядро)
 
