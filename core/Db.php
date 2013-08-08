@@ -149,7 +149,7 @@
      * Smart method for transaction begin.
      * If transaction was starter early
      * it will not start at this time.
-     * It is easy to understend in examples
+     * It is easy to understand in examples
      *
      * @param bool|string $key
      * @return boolean
