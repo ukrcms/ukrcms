@@ -84,7 +84,7 @@
     public function __set($name, $value) {
       if ($this->table->hasColumn($name)) {
         $this->data[$name] = $value;
-        $this->columnChanged[$name] = true;
+        $this->columnChanged[$name] = $this->$name;
       } else {
         $this->$name = $value;
       }
@@ -92,10 +92,13 @@
 
     public function __isset($name) {
       if ($this->table->hasColumn($name)) {
-        return isset($this->data[$name]);
-      } else {
-        return false;
+        return true;
       }
+      $relations = $this->table->relations();
+      if (isset($relations[$name])) {
+        return true;
+      }
+      return false;
     }
 
     public function __get($name) {
@@ -107,6 +110,125 @@
       }
       throw new \Exception('Can not get property ' . $name);
     }
+
+
+    /**
+     * New call
+     * You can add/flush/set model relations
+     *
+     * @param $name
+     * @param $arguments
+     * @return bool
+     * @throws \Exception
+     */
+    public function __call($name, $arguments) {
+
+      if (preg_match('!^(set|add|flush)(.*)$!', $name, $info)) {
+
+        //@todo rewrite relation getter
+
+        # detect relation inf
+        $relationName = $info[2];
+        $relations = $this->getTable()->relations();
+        if (!isset($relations[$relationName])) {
+          throw new \Exception('Not valid relation name');
+        }
+        $relation = $relations[$relationName];
+        /** @var $table Table */
+        $table = $relation[1]::instance();
+        $relationType = $relation[0];
+        switch ($info[1]) {
+          case 'flush':
+            if ($relationType != $table::RELATION_MANY_TO_MANY) {
+              throw new \Exception('You can flush connections only in many_to_many relations ');
+            }
+
+            $relationTablesInfo = explode(', ', $relation[2]);
+
+            $id = $this->pk();
+            if (!empty($id)) {
+              $db = $table->getAdapter();
+
+              $q = 'DELETE FROM' . $db->quoteIdentifier($relationTablesInfo[0]) . ' where ' . $db->quoteIdentifier($relationTablesInfo[1]) . ' = ? ';
+              $db->execute($q, array($id));
+              return true;
+            }
+
+            return true;
+
+            break;
+          case "add":
+
+            if ($relationType != $table::RELATION_MANY_TO_MANY) {
+              throw new \Exception('You can add connections only to many_to_many');
+            }
+
+            if ($this->stored() !== true) {
+              throw new \Exception('You can add/delete connections only for stored models');
+            }
+
+            $models = !empty($arguments[0]) ? $arguments[0] : null;
+            if ($models === null) {
+              throw new \Exception('You need related models');
+            }
+
+            if (!is_array($models)) {
+              $models = array($models);
+            }
+
+            foreach ($models as $model) {
+              if ($model->stored() == false) {
+                throw new \Exception('Related model not stored');
+              }
+              $relationTablesInfo = explode(', ', $relation[2]);
+
+              $params = array(
+                $this->pk(),
+                $model->pk(),
+              );
+              # delete relation with this model
+              $q = 'DELETE FROM `' . $relationTablesInfo[0] . '` WHERE ' . trim($relationTablesInfo[1]) . ' = ? and ' . trim($relationTablesInfo[2]) . ' = ? ';
+              $table->getAdapter()->execute($q, $params);
+
+              # insert id`s of two entities in many_many table
+              $q = 'INSERT INTO `' . $relationTablesInfo[0] . '` SET ' . trim($relationTablesInfo[1]) . ' = ? , `' . trim($relationTablesInfo[2]) . '` = ? ';
+              $table->getAdapter()->execute($q, $params);
+
+            }
+
+            return true;
+            break;
+
+          case "set":
+            if ($relationType != $table::RELATION_ONE_TO_MANY and $relationType != $table::RELATION_ONE_TO_ONE) {
+              throw new \Exception('You can set relations only one_to_one or one_to_many relations');
+            }
+
+            $model = !empty($arguments[0]) ? $arguments[0] : null;
+
+            if ($model === null) {
+              throw new \Exception('You need related models');
+            }
+            if ($model->stored() == false) {
+              throw new \Exception('Related model not stored. Save it first');
+            }
+
+            /** @var $model Model */
+            if (get_class($model->getTable()) !== $relation[1]) {
+              throw new \Exception('You can set only model created by table ' . $relation[1]);
+            }
+
+            $field = $relation[2];
+            $this->$field = $model->pk();
+            return $this;
+            break;
+        }
+
+      }
+
+      throw new \Exception('Method name not valid ' . $name);
+    }
+
 
     protected function init() {
 
@@ -203,7 +325,7 @@
       foreach ($data as $key => $value) {
         if ($this->table->hasColumn($key)) {
           if (isset($this->data[$key]) and $this->data[$key] != $value) {
-            $this->columnChanged[$key] = true;
+            $this->columnChanged[$key] = $this->$key;
           }
           $this->data[$key] = $value;
         } else {
@@ -211,6 +333,22 @@
         }
       }
     }
+
+    /**
+     * @param $key
+     * @return null
+     */
+    public function getInitialValue($key) {
+      if ($this->stored() == false) {
+        return null;
+      }
+      if (isset($this->columnChanged[$key])) {
+        return $this->columnChanged[$key];
+      } else {
+        return null;
+      }
+    }
+
 
     public function save() {
 
