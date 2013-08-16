@@ -206,4 +206,18 @@
       return $this->extension;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUid() {
+      return $this->uid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() {
+      return $this->name;
+    }
+
   }
