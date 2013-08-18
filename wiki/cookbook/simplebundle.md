@@ -12,7 +12,6 @@
 * також будем вважати, що веб-сервер налаштовано і працює.
 </pre>
 
-###Підготовка системи
 Оскільки робота в цього пакунку досить примітивна, йому все одно необхідна таблиця в базі даних.
 В Linux терміналі, добавлення нової таблиці виглядає так:
 <pre>
@@ -41,8 +40,6 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Table.php
 </pre>
 із таким вмістом:
 <pre>
-<?
-
 namespace App\Phrases; ///Обовязкого оголошение неймспейс для майбутнього підключення цієї таблиці.
 
 class Table extends \Uc\Db\Table {
@@ -61,7 +58,6 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Model.php
 </pre>
 із вмістом:
 <pre>
-<?
 namespace App\Phrases;
 class Model extends \Uc\Db\Model{
   const N = __CLASS__;
@@ -76,7 +72,7 @@ class Model extends \Uc\Db\Model{
 muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Controller.php
 </pre>
 із вмістом:
-<?
+<pre>
 namespace App\Phrases;
 class Controller extends \Uc\Controller{
 
