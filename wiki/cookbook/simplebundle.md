@@ -32,7 +32,7 @@ Query OK, 0 rows affected (0.01 sec)
 
 Оскільки пакунок повинен десь знаходитись, потрібно для нього створити каталог: 
 <pre>
-muhasjo@E430:~$cd ~/www/site/protected/bundles && mkdir Phrases`
+muhasjo@E430:~$cd ~/www/site/protected/bundles && mkdir Phrases
 </pre>
 В цьому каталозі будуть розміщені всі файли, які потрібні для роботи пакунку.
 Перш за все потрібен файл для роботи з таблицею в базі даних, це буде `Table.php`
@@ -41,7 +41,7 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Table.php
 </pre>
 із таким вмістом:
 <pre>
-<?php
+<?
 
 namespace App\Phrases; ///Обовязкого оголошение неймспейс для майбутнього підключення цієї таблиці.
 
@@ -61,7 +61,7 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Model.php
 </pre>
 із вмістом:
 <pre>
-<?php
+<?
 namespace App\Phrases;
 class Model extends \Uc\Db\Model{
   const N = __CLASS__;
@@ -76,7 +76,7 @@ class Model extends \Uc\Db\Model{
 muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Controller.php
 </pre>
 із вмістом:
-<?php
+<?
 namespace App\Phrases;
 class Controller extends \Uc\Controller{
 
@@ -110,7 +110,7 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$cd Admin && gedit Controlle
 </pre>
 із таким вмістом:
 <pre>
-<?php
+<?
   namespace App\Phrases\Admin;
 
 
@@ -156,7 +156,7 @@ edit.php містить поле для редагування фрази, в н
 </pre>
 list.php містить тільки опис колонок які будуть показуватить при показі всіх записів:
 <pre>
-<?php
+<?
   $widget = new \Ub\Admin\WidgetCrudList();
   $widget->setData($data);
   $widget->setOptions(array(
