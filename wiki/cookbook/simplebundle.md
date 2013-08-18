@@ -134,7 +134,6 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases/Admin/view$ touch list.php
 
 edit.php містить поле для редагування фрази, в нас це буде звичайна форма з полем типу textarea та кнопки для збереження:
 <pre>
-```
 <div class="full_w">
   <div class="h_title">Редагування</div>
   <form action="" method="post" enctype="multipart/form-data">
@@ -151,7 +150,7 @@ edit.php містить поле для редагування фрази, в н
   </form>
 
 </div>
-```
+
 </pre>
 list.php містить тільки опис колонок які будуть показуватить при показі всіх записів:
 <pre>
@@ -172,7 +171,7 @@ list.php містить тільки опис колонок які будуть
  </pre>
  в файлі Bundle.php описаний масив із назвами пунктів меню та посиланнями на таблицю з редагуванням:
 <pre>
-<?php
+
   namespace App\Phrases;
 
   class Bundle {
