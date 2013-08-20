@@ -49,6 +49,10 @@
       $this->init();
     }
 
+    public function __toString() {
+      return $this->getQuery();
+    }
+
 
     protected function init() {
 

@@ -167,8 +167,8 @@
      */
     public function fetchOne($select) {
       if ($select instanceof \Uc\Db\Select) {
-        $params = $select->getBinds();
         $sql = $select->getQuery();
+        $params = $select->getBinds();
       } else {
         list($where, $params) = $this->getWhereAndParams($select);
         $sql = 'Select * from `' . $this->getTableName() . '` where ' . $where . ' Limit 1';
@@ -192,8 +192,8 @@
 
     public function fetchPage($where, $currentPage = false, $onPage = false) {
       if ($where instanceof \Uc\Db\Select) {
-        $params = $where->getBinds();
         $query = $where->getQuery();
+        $params = $where->getBinds();
         $onPage = $where->getLimitItems();
         $smt = $this->getAdapter()->execute($query, $params);
       } else {
@@ -233,8 +233,8 @@
      */
     public function fetchAll($select = false) {
       if ($select instanceof \Uc\Db\Select) {
-        $params = $select->getBinds();
         $sql = $select->getQuery();
+        $params = $select->getBinds();
       } else {
         list($where, $params) = $this->getWhereAndParams($select);
         $sql = 'Select * from `' . $this->getTableName() . '` where ' . $where;
