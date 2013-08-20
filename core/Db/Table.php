@@ -11,6 +11,7 @@
      * Used for easy support. better refactoring etc
      */
     const N = __CLASS__;
+
     /**
      * Relation constant One to One
      */
@@ -25,6 +26,7 @@
      * Relation constant Many to Many
      */
     const RELATION_MANY_TO_MANY = 3;
+
     /**
      * @var array
      */

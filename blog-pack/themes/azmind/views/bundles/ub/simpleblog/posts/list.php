@@ -23,7 +23,7 @@
         </div>
 
         <div class="meta">
-          Дата публікації: <span><?php echo strftime("%Y-%m-%d %H:%I", $post->date)?></span><br/>
+          Дата публікації: <span><?php echo strftime("%Y-%m-%d %H:%I", $post->date) ?></span><br/>
           <a href="<?php echo $post->getViewUrl() ?>#comment" title="Коментувати статтю <?php echo $post->title ?>">
 
           </a>

@@ -757,7 +757,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   background-color: #e6e6e6;
 }
 .btn:active {
-  background-color: #cccccc                                                                                                                      \9;
+  background-color: #cccccc                                                                                                                        \9;
 }
 .btn:first-child {
   *margin-left: 0;
@@ -783,7 +783,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   background-color: #e6e6e6;
-  background-color: #d9d9d9                                                                                                                      \9;
+  background-color: #d9d9d9                                                                                                                        \9;
   outline: 0;
 }
 .btn[disabled] {

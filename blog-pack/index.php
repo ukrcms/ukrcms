@@ -4,7 +4,6 @@
   $showReports = ($_SERVER['HTTP_HOST'] == 'localhost');
   ini_set('display_errors', $showReports);
 
-
   define('UC_START_MEMORY', memory_get_usage());
   define('UC_START_TIME', microtime(true));
 

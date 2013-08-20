@@ -156,7 +156,7 @@
     /**
      * Set default order
      *
-     * @param string             $field
+     * @param string           $field
      * @param bool|\Uc\Db\type $exp
      * @return $this
      */
@@ -235,7 +235,6 @@
     public function getWhere() {
       return $this->where;
     }
-
 
   }
 

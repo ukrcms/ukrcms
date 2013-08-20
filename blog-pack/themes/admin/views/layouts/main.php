@@ -39,8 +39,10 @@
 
           <?php if (\Uc::app()->userIdentity->isLogin()) { ?>
             <div class="left">
-              <p>Привіт, <strong><?php echo (\Uc::app()->userIdentity->getUser()->name); ?></strong> [
-                <a href=" <?php echo \Uc::app()->url->create(\Uc::app()->userIdentity->getLogoutRoute()); ?>">вихід</a> ]</p>
+              <p>Привіт,
+                <strong><?php echo(\Uc::app()->userIdentity->getUser()->name); ?></strong>
+                [<a href=" <?php echo \Uc::app()->url->create(\Uc::app()->userIdentity->getLogoutRoute()); ?>">вихід</a>]
+              </p>
             </div>
           <?php } ?>
           <div class="right">
@@ -104,8 +106,8 @@
                       $icon = $info['icon'];
                     }
                     ?>
-                    <li class="b <?php echo !empty($info['current']) ? 'current' : '' ?>"><a class="icon <?php echo $icon ?>"
-                                                                                      href="<?php echo $href ?>"><?php echo $text ?></a>
+                    <li class="b <?php echo !empty($info['current']) ? 'current' : '' ?>">
+                      <a class="icon <?php echo $icon ?>" href="<?php echo $href ?>"><?php echo $text ?></a>
                     </li>
                   <?php } ?>
                 </ul>

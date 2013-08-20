@@ -36,7 +36,7 @@
           <li class="widget widget_text"><h2 class="widgettitle">Віджет</h2>
 
             <div class="textwidget">
-              <?php echo  \Ub\Site\Settings\Table::get('slogan') ?>
+              <?php echo \Ub\Site\Settings\Table::get('slogan') ?>
             </div>
           </li>
 

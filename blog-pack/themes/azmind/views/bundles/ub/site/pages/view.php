@@ -5,7 +5,6 @@
   </h2>
 
 
-
   <div class="full-post-content">
     <?php echo $model->text ?>
   </div>

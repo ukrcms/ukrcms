@@ -1097,9 +1097,9 @@
               b.setState(ta);
               m.css(l)
             }).on("mouseout",function () {
-              m.css(b.visible ? n : q);
-              b.setState()
-            }).on("click",function () {
+                m.css(b.visible ? n : q);
+                b.setState()
+              }).on("click",function () {
                 var a = function () {
                   b.setVisible()
                 };
@@ -2852,9 +2852,9 @@
         if (b.hoverSeries !== a && A(j, "isTracker") !== f)a.onMouseOver();
         h.onMouseOver()
       }).on("mouseout",function (b) {
-        if (!g.stickyTracking &&
-          (j = b.relatedTarget || b.toElement, A(j, "isTracker") !== f))a.onMouseOut()
-      }).css(i).add(h.group || k)
+          if (!g.stickyTracking &&
+            (j = b.relatedTarget || b.toElement, A(j, "isTracker") !== f))a.onMouseOut()
+        }).css(i).add(h.group || k)
     })
   }, animate: function (a) {
     var b = this, c = b.points, d = b.options;
@@ -2889,8 +2889,8 @@
       a.onMouseOver();
       if (b.target._i !== X)c[b.target._i].onMouseOver()
     }).on("mouseout",function () {
-      if (!a.options.stickyTracking)a.onMouseOut()
-    }).css(b)
+        if (!a.options.stickyTracking)a.onMouseOut()
+      }).css(b)
   }});
   Ha.scatter = w;
   w = pa(lb, {init: function () {
