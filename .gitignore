@@ -1,2 +1,5 @@
+bin/
+composer.lock
+vendor/
 .idea/
 generate-packs/src/

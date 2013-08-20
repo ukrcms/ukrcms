@@ -14,7 +14,7 @@
   define('TEST_DB_PASS', '1111');
 
 
-  define('LIB_BEHAT_PATH', '/home/ivan/work/lib/composer/bin/behat');
+  define('LIB_BEHAT_PATH', '/home/ivan/work/www/ukrcms/bin/behat');
 
   define('PACKAGES_DIR', '/home/ivan/work/www/ukrcms/generate-packs/src');
 

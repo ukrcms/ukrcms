@@ -2,8 +2,9 @@
 
 
  # copy bundles
- SCRIPT_DIR=$(dirname $(readlink -f $BASH_SOURCE))
- DIR=$SCRIPT_DIR;
+ source `dirname $BASH_SOURCE`/../dev-data/lib.sh
+
+ DIR=`script_dir`;
 
  for path in `find $DIR/../ -maxdepth 1 -name *-pack  -type d `
  do

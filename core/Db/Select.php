@@ -225,5 +225,13 @@
       return $this->binds;
     }
 
+    /**
+     * @return array
+     */
+    public function getWhere() {
+      return $this->where;
+    }
+
+
   }
 
