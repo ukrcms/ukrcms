@@ -252,7 +252,7 @@
       if ($name !== null) {
         $this->where[$name] = $whereData;
       } else {
-        $this->where[$name] = $whereData;
+        $this->where[] = $whereData;
       }
       return $this;
     }
@@ -317,27 +317,6 @@
     }
 
     public function getQuery($prepared = false) {
-      $relations = $this->table->relations();
-      /** @var $table \Uc\Db\Table */
-      $table = $this->table;
-
-      foreach ($this->joinWithSelect as $name => $select) {
-        # todo. make tableName alias
-        $where = $select->getWhere();
-        foreach ($where as $whereData) {
-          $this->where($whereData['condition'], $whereData['binds']);
-        }
-
-        $relation = $relations[$name];
-        if ($relation[0] == $table::RELATION_MANY_TO_MANY) {
-          list($relatedTable, $relField, $currentField) = explode(', ', $relation[2]);
-          $this->join('LEFT JOIN ' . $relatedTable . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $relatedTable . '.' . $relField);
-          $this->join('LEFT JOIN ' . $select->tableName . ' on ' . $select->tableName . '.' . $select->table->pk() . ' = ' . $relatedTable . '.' . $currentField);
-        } else {
-          throw new \Exception('@todo. implement relation join');
-        }
-
-      }
 
       $query = 'SELECT ';
 
@@ -350,12 +329,14 @@
       }
       $query .= 'FROM ' . $this->tableName . ' ';
 
-      if (!empty($this->joins)) {
-        $query .= implode(' ', $this->joins) . ' ';
+      $joins = $this->getJoins();
+      if (!empty($joins)) {
+        $query .= implode(' ', $joins) . ' ';
       }
 
-      if (!empty($this->where)) {
-        $query .= 'WHERE (' . implode(') AND (', $this->getWhereConditions($prepared)) . ') ';
+      $where = $this->getWhereConditions($prepared);
+      if (!empty($where)) {
+        $query .= 'WHERE (' . implode(') AND (', $where) . ') ';
       }
 
       if (!empty($this->group)) {
@@ -377,10 +358,37 @@
       return $query;
     }
 
+    protected function getJoins() {
+      $relations = $this->table->relations();
+      /** @var $table \Uc\Db\Table */
+      $table = $this->table;
+
+      $joins = $this->joins;
+      foreach ($this->joinWithSelect as $name => $select) {
+
+        $relation = $relations[$name];
+        if ($relation[0] == $table::RELATION_MANY_TO_MANY) {
+          list($relatedTable, $relField, $currentField) = explode(', ', $relation[2]);
+          $joins[] = 'LEFT JOIN ' . $relatedTable . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $relatedTable . '.' . $relField;
+          $joins[] = 'LEFT JOIN ' . $select->tableName . ' on ' . $select->tableName . '.' . $select->table->pk() . ' = ' . $relatedTable . '.' . $currentField;
+        } else {
+          throw new \Exception('@todo. implement relation join');
+        }
+
+      }
+
+      return $joins;
+    }
+
     public function getBinds() {
       $binds = array();
-
-      foreach ($this->where as $whereInfo) {
+      $where = array_values($this->where);
+      foreach ($this->joinWithSelect as $select) {
+        foreach ($select->getWhere() as $whereData) {
+          $where[] = $whereData;
+        }
+      }
+      foreach ($where as $whereInfo) {
         foreach ($whereInfo['binds'] as $bindValue) {
           if ($bindValue !== null) {
             $binds[] = $bindValue;
@@ -391,15 +399,23 @@
       return $binds;
     }
 
+
     protected function getWhereConditions($prepared = false) {
       $whereConditions = array();
 
+      $where = array_values($this->where);
+      foreach ($this->joinWithSelect as $select) {
+        foreach ($select->getWhere() as $whereData) {
+          $where[] = $whereData;
+        }
+      }
+
       if (!$prepared) {
-        foreach ($this->where as $whereData) {
+        foreach ($where as $whereData) {
           $whereConditions[] = $whereData['condition'];
         }
       } else {
-        foreach ($this->where as $whereData) {
+        foreach ($where as $whereData) {
 
           $condition = $whereData['condition'];
           foreach ($whereData['binds'] as $bindValue) {
