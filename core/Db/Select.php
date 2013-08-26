@@ -371,8 +371,12 @@
           list($relatedTable, $relField, $currentField) = explode(', ', $relation[2]);
           $joins[] = 'LEFT JOIN ' . $relatedTable . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $relatedTable . '.' . $relField;
           $joins[] = 'LEFT JOIN ' . $select->tableName . ' on ' . $select->tableName . '.' . $select->table->pk() . ' = ' . $relatedTable . '.' . $currentField;
+        } elseif ($relation[0] == $table::RELATION_ONE_TO_MANY) {
+          $joins[] = 'LEFT JOIN ' . $select->getTableName() . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation[2];
+        } elseif ($relation[0] == $table::RELATION_ONE_TO_ONE) {
+          $joins[] = 'LEFT JOIN ' . $select->getTableName() . ' on ' . $this->tableName . '.' . $relation[2] . ' = ' . $select->getTableName() . '.' . $table->pk();
         } else {
-          throw new \Exception('@todo. implement relation join');
+          throw new \Exception('Not valid relation type');
         }
 
       }
@@ -443,6 +447,13 @@
      */
     public function getTable() {
       return $this->table;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName() {
+      return $this->tableName;
     }
 
   }
