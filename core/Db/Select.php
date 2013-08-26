@@ -316,6 +316,12 @@
       return $this;
     }
 
+    /**
+     * Return sql query
+     *
+     * @param bool $prepared
+     * @return string
+     */
     public function getQuery($prepared = false) {
 
       $query = 'SELECT ';
