@@ -19,10 +19,10 @@
 
     <div class="element">
       <label for="category">Категорія<span class="red">(обов'язково)</span></label>
-      <?php $groups = \Ub\Simpleblog\Categories\Table::instance()->fetchAll(); ?>
+      <?php $categories = \Ub\Simpleblog\Categories\Table::instance()->fetchAll(); ?>
       <select id="category" name="data[category_id]">
-        <?php foreach ($groups as $group) { ?>
-          <option value="<?php echo $group->id ?>" <?php echo $group->id == $model->category_id ? 'selected="selected"' : '' ?>><?php echo $group->title ?></option>
+        <?php foreach ($categories as $category) { ?>
+          <option value="<?php echo $category->pk() ?>" <?php echo $category->pk() == $model->category_id ? 'selected="selected"' : '' ?>><?php echo $category->title ?></option>
         <?php } ?>
       </select>
     </div>
@@ -68,9 +68,8 @@
     </div>
 
     <div class="element">
-      <?php $comments = $model->comments; ?>
-      <label for="published">Коментарів #<?php echo count($comments) ?></label>
-      <?php foreach ($comments as $comment) { ?>
+      <label for="published">Коментарів #<?php echo count($model->Comments) ?></label>
+      <?php foreach ($model->comments as $comment) { ?>
         <a href="<?php echo \Uc::app()->url->create('ub/simpleblog/comments/admin/edit', array('pk' => $comment->pk())) ?>" target="_blank">{<?php echo $comment->status ?>
           } <?php echo $comment->name ?></a>
         <br>

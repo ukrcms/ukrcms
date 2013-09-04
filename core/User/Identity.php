@@ -13,6 +13,11 @@
 
     public $successLogoutRoute = null;
 
+    public function __construct() {
+      $this->init();
+    }
+
+
     protected function getSessionKey() {
       return md5('user_id' . \Uc::app()->url->getBaseUrl());
     }

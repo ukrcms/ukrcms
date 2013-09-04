@@ -16,8 +16,16 @@
 
     public function relations() {
       return array(
-        'category' => array(self::RELATION_ONE_TO_ONE, \Ub\Simpleblog\Categories\Table::N, 'category_id'),
-        'comments' => array(self::RELATION_ONE_TO_MANY, \Ub\Simpleblog\Comments\Table::N, 'post_id'),
+        'category' => array(
+          'type' => self::RELATION_ONE_TO_ONE,
+          'table' => \Ub\Simpleblog\Categories\Table::N,
+          'foreignField' => 'category_id'
+        ),
+        'comments' => array(
+          'type' => self::RELATION_ONE_TO_MANY,
+          'table' => \Ub\Simpleblog\Comments\Table::N,
+          'myField' => 'post_id'
+        ),
       );
     }
 

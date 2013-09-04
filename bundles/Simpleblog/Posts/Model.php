@@ -15,7 +15,7 @@
     public $image = null;
 
 
-    protected function init() {
+    public function init() {
       if (!empty($this->imageData)) {
         $this->image = new Image($this->imageData);
       }
@@ -25,8 +25,8 @@
     public function comments() {
       $commentTable = \Ub\Simpleblog\Comments\Table::instance();
       $select = $commentTable->select();
-      $select->where('status = ? ', \Ub\Simpleblog\Comments\Model::STATUS_APPROVED);
-      $select->where('post_id = ? ', $this->pk());
+      $select->statusIs(\Ub\Simpleblog\Comments\Model::STATUS_APPROVED);
+      $select->post_idIs($this->pk());
       $select->order('time', 'DESC');
       return $commentTable->fetchAll($select);
     }

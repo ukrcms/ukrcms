@@ -21,7 +21,7 @@
 
     public function getAll() {
       $select = $this->select();
-      $select->where('status = ?', Model::STATUS_ENABLED);
+      $select->statusIs(Model::STATUS_ENABLED);
       return $this->fetchAll($select);
     }
 

@@ -8,7 +8,7 @@
    *
    * @author Ivan Scherbak <dev@funivan.com>
    */
-  class Model {
+  class Model extends \Uc\Component {
 
     /**
      * For better support of the code
@@ -21,37 +21,28 @@
      *
      * @var array
      */
-    private $data = array();
+    protected $data = array();
 
     /**
      * Changed columns
      *
      * @var array
      */
-    private $columnChanged = array();
+    protected $columnChanged = array();
 
     /**
      * Indicate if entity is stored in db or not
      *
      * @var boolean
      */
-    private $stored = false;
+    protected $stored = false;
 
-    /**
-     * Array of entities that will be saved and
-     */
-    private $addedRelatedEntities = array();
 
     /**
      * @var \Uc\Db\Table
      */
     protected $table = null;
 
-    /**
-     *
-     * @var array
-     */
-    private $relationsCache = array();
 
     /**
      *
@@ -71,14 +62,15 @@
         $this->setFromArray($config['data']);
       }
 
-      $this->relationsCache = $this->table->relations();
       $this->init();
     }
 
     public function __set($name, $value) {
       if ($this->table->hasColumn($name)) {
+        if (!isset($this->data[$name]) or $this->data[$name] != $value) {
+          $this->columnChanged[$name] = $this->$name;
+        }
         $this->data[$name] = $value;
-        $this->columnChanged[$name] = $this->$name;
       } else {
         $this->$name = $value;
       }
@@ -88,18 +80,15 @@
       if ($this->table->hasColumn($name)) {
         return true;
       }
-      $relations = $this->table->relations();
-      if (isset($relations[$name])) {
-        return true;
-      }
-      return false;
+
+      return ($this->table->getRelation($name) !== null);
     }
 
     public function __get($name) {
       if ($this->table->hasColumn($name)) {
         return isset($this->data[$name]) ? $this->data[$name] : false;
-      } elseif (isset($this->relationsCache[$name])) {
-        $this->{$name} = $this->getRelatedObject($this->relationsCache[$name]);
+      } elseif ($this->table->getRelation($name)) {
+        $this->{$name} = $this->getRelatedObject($name);
         return $this->{$name};
       }
       throw new \Exception('Can not get property ' . $name);
@@ -117,33 +106,29 @@
      */
     public function __call($name, $arguments) {
 
-      if (preg_match('!^(set|add|flush)(.*)$!', $name, $info)) {
-
-        //@todo rewrite relation getter
+      if (preg_match('!^(?J)((?P<actionName>(add|set))(?P<relationName>.*))|((?P<actionName>remove)(?P<relationName>.*)Connections)$!i', $name, $info)) {
 
         # detect relation inf
-        $relationName = $info[2];
-        $relations = $this->getTable()->relations();
-        if (!isset($relations[$relationName])) {
-          throw new \Exception('Not valid relation name');
+        $relationName = $info['relationName'];
+        $relation = $this->table->getRelation($relationName);
+        if (empty($relation)) {
+          throw new \Exception('Not valid relation name: ' . $relationName);
         }
-        $relation = $relations[$relationName];
         /** @var $table Table */
-        $table = $relation[1]::instance();
-        $relationType = $relation[0];
-        switch ($info[1]) {
-          case 'flush':
+        $table = $relation['table']::instance();
+        $relationType = $relation['type'];
+        switch ($info['actionName']) {
+          case 'remove':
             if ($relationType != $table::RELATION_MANY_TO_MANY) {
               throw new \Exception('You can flush connections only in many_to_many relations ');
             }
 
-            $relationTablesInfo = explode(', ', $relation[2]);
+            $relationTableReference = $relation['reference'];
 
             $id = $this->pk();
             if (!empty($id)) {
               $db = $table->getAdapter();
-
-              $q = 'DELETE FROM' . $db->quoteIdentifier($relationTablesInfo[0]) . ' where ' . $db->quoteIdentifier($relationTablesInfo[1]) . ' = ? ';
+              $q = 'DELETE FROM ' . $db->quoteIdentifier($relationTableReference['tableName']) . ' where ' . $db->quoteIdentifier($relationTableReference['myField']) . ' = ? ';
               $db->execute($q, array($id));
               return true;
             }
@@ -154,16 +139,16 @@
           case "add":
 
             if ($relationType != $table::RELATION_MANY_TO_MANY) {
-              throw new \Exception('You can add connections only to many_to_many');
+              throw new \Exception('You can add connections only in many_to_many relation');
             }
 
             if ($this->stored() !== true) {
-              throw new \Exception('You can add/delete connections only for stored models');
+              throw new \Exception('You can add connections only for stored models');
             }
 
             $models = !empty($arguments[0]) ? $arguments[0] : null;
             if ($models === null) {
-              throw new \Exception('You need related models');
+              throw new \Exception('You need related models when you add connections');
             }
 
             if (!is_array($models)) {
@@ -172,20 +157,21 @@
 
             foreach ($models as $model) {
               if ($model->stored() == false) {
-                throw new \Exception('Related model not stored');
+                throw new \Exception('Related model not stored. Save it and try again to add connections');
               }
-              $relationTablesInfo = explode(', ', $relation[2]);
+              $relationTableReference = $relation['reference'];
 
               $params = array(
                 $this->pk(),
                 $model->pk(),
               );
+
               # delete relation with this model
-              $q = 'DELETE FROM `' . $relationTablesInfo[0] . '` WHERE ' . trim($relationTablesInfo[1]) . ' = ? and ' . trim($relationTablesInfo[2]) . ' = ? ';
+              $q = 'DELETE FROM ' . $table->getAdapter()->quoteIdentifier($relationTableReference['tableName']) . ' WHERE ' . $table->getAdapter()->quoteIdentifier($relationTableReference['myField']) . ' = ? and ' . $table->getAdapter()->quoteIdentifier($relationTableReference['foreignField']) . ' = ? ';
               $table->getAdapter()->execute($q, $params);
 
               # insert id`s of two entities in many_many table
-              $q = 'INSERT INTO `' . $relationTablesInfo[0] . '` SET ' . trim($relationTablesInfo[1]) . ' = ? , `' . trim($relationTablesInfo[2]) . '` = ? ';
+              $q = 'INSERT INTO ' . $table->getAdapter()->quoteIdentifier($relationTableReference['tableName']) . ' SET ' . $table->getAdapter()->quoteIdentifier($relationTableReference['myField']) . ' = ? , ' . $table->getAdapter()->quoteIdentifier($relationTableReference['foreignField']) . ' = ? ';
               $table->getAdapter()->execute($q, $params);
 
             }
@@ -194,8 +180,12 @@
             break;
 
           case "set":
-            if ($relationType != $table::RELATION_ONE_TO_MANY and $relationType != $table::RELATION_ONE_TO_ONE) {
-              throw new \Exception('You can set relations only one_to_one or one_to_many relations');
+            if ($relationType != $table::RELATION_ONE_TO_ONE) {
+              throw new \Exception('You can set relations only in one_to_one type. Current type is ' . $relationType);
+            }
+
+            if (empty($relation['foreignField'])) {
+              throw new \Exception('foreignField required in relation');
             }
 
             $model = !empty($arguments[0]) ? $arguments[0] : null;
@@ -208,12 +198,13 @@
             }
 
             /** @var $model Model */
-            if (get_class($model->getTable()) !== $relation[1]) {
+            if (get_class($model->getTable()) !== $relation['table']) {
               throw new \Exception('You can set only model created by table ' . $relation[1]);
             }
 
-            $field = $relation[2];
+            $field = $relation['foreignField'];
             $this->$field = $model->pk();
+
             return $this;
             break;
         }
@@ -221,11 +212,6 @@
       }
 
       throw new \Exception('Method name not valid ' . $name);
-    }
-
-
-    protected function init() {
-
     }
 
     /**
@@ -240,27 +226,48 @@
     }
 
     /**
-     * @param $relationParams
+     * @param $name
+     * @throws \Exception
      * @return mixed
      */
-    private function getRelatedObject($relationParams) {
-      $tableClassName = $relationParams[1];
+    protected function getRelatedObject($name) {
+      $relation = $this->table->getRelation($name);
+      $tableClassName = $relation['table'];
 
       /** @var $table \Uc\Db\Table */
       $table = $tableClassName::instance();
 
-      if ($relationParams[0] == $table::RELATION_ONE_TO_ONE) {
-        $pkField = $this->{$relationParams[2]};
-        $item = $table->fetchOne($pkField);
+      if ($relation['type'] == $table::RELATION_ONE_TO_ONE) {
+        if (!empty($relation['foreignField'])) {
+          $pkField = $this->{$relation['foreignField']};
+          $item = $table->fetchOne($pkField);
+        } else {
+          $item = $table->fetchOne(array(
+            $relation['myField'] => $this->pk()
+          ));
+        }
         return $item;
-      } elseif ($relationParams[0] == $table::RELATION_ONE_TO_MANY) {
-        $items = $table->fetchAll(array($relationParams[2] => $this->pk()));
+      } elseif ($relation['type'] == $table::RELATION_ONE_TO_MANY) {
+        if (!empty($relation['myField'])) {
+          $items = $table->fetchAll(array($relation['myField'] => $this->pk()));
+        } else if (!empty($relation['foreignField'])) {
+          $items = $this->table->fetchAll(array($relation['foreignField'] => $this->pk()));
+        } else {
+          throw new \Exception('Not valid relation ' . $name . ' in class ' . get_called_class() . '. Please set myField or foreignField');
+        }
         return $items;
-      } elseif ($relationParams[0] == $table::RELATION_MANY_TO_MANY) {
+      } elseif ($relation['type'] == $table::RELATION_MANY_TO_MANY) {
         $select = $table->select();
-        $relatedTableInfo = explode(',', $relationParams[2]);
-        $select->join('left join ' . trim($relatedTableInfo[0]) . ' on ' . $relatedTableInfo[0] . '.' . trim($relatedTableInfo[2]) . '=' . $table->getTableName() . '.id');
-        $select->where($relatedTableInfo[0] . '.' . trim($relatedTableInfo[1]) . ' = ? ', $this->pk());
+        $relatedTableReference = $relation['reference'];
+        $select->join('LEFT JOIN '
+            . $relatedTableReference['tableName']
+            . ' on '
+            . $table->getTableName() . '.' . $table->pk()
+            . ' = '
+            . $relatedTableReference['tableName'] . '.' . $relatedTableReference['foreignField']
+        );
+
+        $select->where($relation['reference']['tableName'] . '.' . $relation['reference']['myField'] . ' = ? ', $this->pk());
         $items = $table->fetchAll($select);
         return $items;
       }

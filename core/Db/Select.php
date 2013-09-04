@@ -4,7 +4,7 @@
   /**
    * @author Ivan Scherbak <dev@funivan.com>
    */
-  class Select {
+  class Select extends \Uc\Component {
 
     const N = __CLASS__;
 
@@ -44,18 +44,9 @@
     protected $joinWithSelect = array();
 
 
-    public function __construct($table, $adapter = null) {
+    public function __construct(Table $table) {
 
-      if (is_string($table)) {
-
-        if (empty($adapter)) {
-          $adapter = $this->getAdapter();
-        }
-
-        $this->table = $adapter->getTable($table);
-      } else {
-        $this->table = $table;
-      }
+      $this->table = $table;
 
       $this->tableName = $this->table->getTableName();
       $this->selectCols = array($this->tableName . '.*');
@@ -73,7 +64,7 @@
      * You can join one select with other following this syntax
      *
      * <code>
-     * $postSelect->withUser()->where('name = ? ', 'funivan');
+     * $postSelect->joinWithUsers()->where('name = ? ', 'funivan');
      * </code>
      *
      * This code select all posts that has user with name funivan
@@ -91,17 +82,18 @@
           $args[0] = null;
         }
         return $this->createWhere($params[1], $params[2], $arguments[0]);
-      } elseif (strpos($name, 'with') === 0) {
-        $relationName = substr($name, 4);
+      } elseif (strpos($name, 'joinWith') === 0) {
+        $relationName = lcfirst(substr($name, 8));
         if (isset($this->joinWithSelect[$relationName])) {
           return $this->joinWithSelect[$relationName];
         }
-        $relations = $this->table->relations();
-        if (!isset($relations[$relationName])) {
-          throw new \Exception('Not valid relation name: ' . $relationName);
+
+        $relation = $this->table->getRelation($relationName);
+        if (empty($relation)) {
+          throw new \Exception('Not valid relation name: ' . $relationName . ' in table ' . get_class($this->table));
         }
 
-        $joinedSelect = $relations[$relationName][1]::instance()->select();
+        $joinedSelect = $relation['table']::instance()->select();
         $this->joinWithSelect[$relationName] = $joinedSelect;
 
         return $this->joinWithSelect[$relationName];
@@ -135,7 +127,7 @@
      * @throws \Exception
      * @return $this
      */
-    private function createWhere($field, $operation, $values) {
+    protected function createWhere($field, $operation, $values) {
 
       $whereName = $field . '-' . strtolower($operation);
 
@@ -184,12 +176,8 @@
       return $this;
     }
 
-    protected function init() {
-
-    }
-
     public function getAdapter() {
-      return \Uc::app()->db;
+      return $this->table->getAdapter();
     }
 
 
@@ -297,9 +285,9 @@
      */
     public function order($field, $exp = false) {
       if (!empty($exp)) {
-        $this->order['def'] = \Uc::app()->db->quoteIdentifier($field) . " " . $exp;
+        $this->order['_def'] = \Uc::app()->db->quoteIdentifier($field) . " " . $exp;
       } else {
-        $this->order['def'] = $field;
+        $this->order['_def'] = $field;
       }
       return $this;
     }
@@ -365,22 +353,35 @@
     }
 
     protected function getJoins() {
-      $relations = $this->table->relations();
       /** @var $table \Uc\Db\Table */
       $table = $this->table;
+      $db = $table->getAdapter();
+      $relations = $table->relations();
 
       $joins = $this->joins;
       foreach ($this->joinWithSelect as $name => $select) {
 
         $relation = $relations[$name];
-        if ($relation[0] == $table::RELATION_MANY_TO_MANY) {
-          list($relatedTable, $relField, $currentField) = explode(', ', $relation[2]);
-          $joins[] = 'LEFT JOIN ' . $relatedTable . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $relatedTable . '.' . $relField;
-          $joins[] = 'LEFT JOIN ' . $select->tableName . ' on ' . $select->tableName . '.' . $select->table->pk() . ' = ' . $relatedTable . '.' . $currentField;
-        } elseif ($relation[0] == $table::RELATION_ONE_TO_MANY) {
-          $joins[] = 'LEFT JOIN ' . $select->getTableName() . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation[2];
-        } elseif ($relation[0] == $table::RELATION_ONE_TO_ONE) {
-          $joins[] = 'LEFT JOIN ' . $select->getTableName() . ' on ' . $this->tableName . '.' . $relation[2] . ' = ' . $select->getTableName() . '.' . $table->pk();
+
+        if ($relation['type'] == $table::RELATION_MANY_TO_MANY) {
+          $relatedTableReference = $relation['reference'];
+          $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($relatedTableReference['tableName'])
+            . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $relatedTableReference['tableName'] . '.' . $relatedTableReference['myField'];
+          $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->tableName) . ' on ' . $select->tableName . '.' . $select->table->pk() . ' = ' . $relatedTableReference['tableName'] . '.' . $relatedTableReference['foreignField'];
+
+        } elseif ($relation['type'] == $table::RELATION_ONE_TO_MANY) {
+          if (!empty($relation['myField'])) {
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['myField'];
+          } else {
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['foreignField'];
+          }
+
+        } elseif ($relation['type'] == $table::RELATION_ONE_TO_ONE) {
+          if (!empty($relation['foreignField'])) {
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $relation['foreignField'] . ' = ' . $select->getTableName() . '.' . $table->pk();
+          } else {
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['myField'];
+          }
         } else {
           throw new \Exception('Not valid relation type');
         }
@@ -432,7 +433,7 @@
             if ($bindValue !== null) {
               $pos = strpos($condition, '?');
               if ($pos !== false) {
-                $condition = substr_replace($condition, $this->getTable()->getAdapter()->quote($bindValue), $pos, 1);
+                $condition = substr_replace($condition, $this->table->getAdapter()->quote($bindValue), $pos, 1);
               }
             }
           }

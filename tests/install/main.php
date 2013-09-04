@@ -68,4 +68,15 @@
 
     }
 
+    /**
+     * @Given /^I test page( .+|)$/
+     */
+    public function iTestPage($pageUrl = false) {
+      if (!empty($pageUrl)) {
+        $this->visit(trim($pageUrl));
+      }
+
+      $this->assertPageNotContainsText('Error:');
+    }
+
   }

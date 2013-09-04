@@ -129,7 +129,7 @@
     public function actionRss() {
       $postTable = Table::instance();
       $postsSelect = $postTable->select();
-      $postsSelect->where('published = ? ', 1);
+      $postsSelect->publishedIs(1);
       $postsSelect->pageLimit(1, 50);
       $postsSelect->order('date', 'DESC');
       $items = array();
@@ -165,9 +165,9 @@
       $postTable = Table::instance();
       $postsSelect = $postTable->select();
 
-      $postsSelect->where('published = ? ', 1);
+      $postsSelect->publishedIs(1);
       if (!empty($catPk)) {
-        $postsSelect->where('category_id = ? ', $catPk);
+        $postsSelect->category_idIs($catPk);
       }
 
       $postsSelect->order('date', 'DESC');

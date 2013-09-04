@@ -7,7 +7,11 @@
    * @package Uc
    * @author  Ivan Scherbak <dev@funivan.com>
    */
-  class Controller {
+  class Controller extends Component{
+
+    public function __construct() {
+      $this->init();
+    }
 
     /**
      * @param string         $file

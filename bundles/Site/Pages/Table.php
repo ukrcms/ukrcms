@@ -23,7 +23,7 @@
     public function getAllFromCache() {
       if (static::$pages === null) {
         $select = static::instance()->select();
-        $select->where('published = ? ', \Ub\Site\Pages\Model::STATUS_PUBLISHED);
+        $select->publishedIs(\Ub\Site\Pages\Model::STATUS_PUBLISHED);
         $data = static::instance()->fetchAll($select);
         foreach ($data as $page) {
           static::$pages[$page->pk()] = $page;

@@ -113,6 +113,8 @@
         }
       }
 
+      $this->init();
+
       return $this;
     }
 
@@ -177,7 +179,7 @@
      * @param $controllerName
      * @return string
      */
-    private function getControllerClassName($controllerName) {
+    protected function getControllerClassName($controllerName) {
       $controllerName = implode('\\', array_map("ucfirst", explode('/', $controllerName)));
       return '\\' . $this->controllerPrefix . $controllerName . '\\' . $this->controllerPostfix;
     }
@@ -188,7 +190,7 @@
      * @param string $actionName
      * @return string
      */
-    private function getActionName($actionName) {
+    protected function getActionName($actionName) {
       return $controllerActionName = $this->actionPrefix . ucfirst($actionName) . $this->actionPostfix;
     }
 

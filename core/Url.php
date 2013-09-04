@@ -91,7 +91,7 @@
      * @throws \Exception
      * @return boolean
      */
-    private function _parseUrl() {
+    protected function _parseUrl() {
       if ($this->_urlIsParsed) {
         return true;
       }

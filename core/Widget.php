@@ -1,13 +1,17 @@
 <?php
   namespace Uc;
 
-  abstract class Widget {
+  abstract class Widget extends Component {
 
     protected $data = array();
 
     protected $options = array();
 
     abstract protected function getViewFile();
+
+    public function __construct() {
+      $this->init();
+    }
 
     public function setData($data) {
       $this->data = $data;

@@ -56,14 +56,14 @@
    done
 
 
-  files=("index.php" ".htaccess")
+  files=("index.php" "app.php" ".htaccess")
   for file in ${files[*]}
   do
     cp -r "$path/$file" "$SAVE_DIR/$file";
   done
 
-  find "$SAVE_DIR/index.php" -type f -exec sed -i -e 's/\/..\/core/\/ukrcms\/core/g' {} \;
-  find "$SAVE_DIR/index.php" -type f -exec sed -i -e 's/\/..\/bundles/\/ukrcms\/bundles/g' {} \;
+  find "$SAVE_DIR/app.php" -type f -exec sed -i -e 's/\/..\/core/\/ukrcms\/core/g' {} \;
+  find "$SAVE_DIR/app.php" -type f -exec sed -i -e 's/\/..\/bundles/\/ukrcms\/bundles/g' {} \;
 
   CONFIG_FILE="$SAVE_DIR/protected/config/main.php"
 
@@ -82,7 +82,7 @@
   done;
 
 
-  ZIP_FILE="$DIR/src/$name-1.0.zip"
+  ZIP_FILE="$DIR/src/$name-1.1.zip"
 
   rm -rf $ZIP_FILE
   cd "$SAVE_DIR" && zip -9 -r $ZIP_FILE . && cd $DIR;

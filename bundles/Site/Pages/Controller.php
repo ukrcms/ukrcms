@@ -32,9 +32,9 @@
 
       $postTable = \Ub\Site\Pages\Table::instance();
       $select = $postTable->select();
-      $select->where('sef = ? ', $sef);
+      $select->sefIs($sef);
 
-      $select->where('published = ? ', \Ub\Site\Pages\Model::STATUS_PUBLISHED);
+      $select->publishedIs(\Ub\Site\Pages\Model::STATUS_PUBLISHED);
       $page = $postTable->fetchOne($select);
 
       if (empty($page)) {

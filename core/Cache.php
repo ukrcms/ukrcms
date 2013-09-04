@@ -2,16 +2,20 @@
 
   namespace Uc;
 
-  class Cache {
+  class Cache extends Component {
 
-    private static $data = array();
+    private $data = array();
+
+    public function __construct() {
+      $this->init();
+    }
 
     /**
      * @param string  $key
      * @param integer $item
      */
-    public static function set($key, $item) {
-      self::$data[$key] = $item;
+    public function set($key, $item) {
+      $this->data[$key] = $item;
     }
 
     /**
@@ -19,8 +23,8 @@
      * @param string|integer $key
      * @return mixed
      */
-    public static function get($key) {
-      return isset(self::$data[$key]) ? self::$data[$key] : null;
+    public function get($key) {
+      return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
     /**
@@ -28,8 +32,8 @@
      * @param string|integer $key
      * @return boolean
      */
-    public static function has($key) {
-      return isset(self::$data[$key]);
+    public function has($key) {
+      return isset($this->data[$key]);
     }
 
   }

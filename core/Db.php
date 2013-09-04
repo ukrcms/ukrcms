@@ -124,22 +124,6 @@
       return $this->execute($query, $binds);
     }
 
-    /**
-     *
-     * @param string $tableClassName
-     * @return \Table
-     */
-    public function getTable($tableClassName) {
-      if (isset($this->tablesCached[$tableClassName])) {
-        return $this->tablesCached[$tableClassName];
-      }
-
-      $adapter = $this;
-
-      $this->tablesCached[$tableClassName] = new $tableClassName($adapter);
-      return $this->tablesCached[$tableClassName];
-    }
-
     public function quoteIdentifier($value) {
       $q = self::QUOTE_IDENTIFIER;
       return ($q . str_replace("$q", "$q$q", $value) . $q);

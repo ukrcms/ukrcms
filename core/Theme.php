@@ -89,7 +89,7 @@
     }
 
     public function getUrl() {
-      return \Uc::app()->url->getBaseUrl() . $this->baseUrl . DIRECTORY_SEPARATOR . $this->themeName;
+      return \Uc::app()->url->getBaseUrl() . $this->baseUrl . '/' . $this->themeName;
     }
 
     public function getBaseUrl() {

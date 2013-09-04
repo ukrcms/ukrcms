@@ -49,8 +49,13 @@
 
       if (!file_exists($fileConfig)) {
         $this->errors[] = 'Неможливо знайти файл конфігурації ' . $configFilePartialPath;
-      } elseif (!is_writable($fileConfig)) {
-        $this->errors[] = 'Файл конфігурації має бути доступний для запису (chmod 0777 ' . $configFilePartialPath . ')';
+      } else {
+        $fileContent = file_get_contents($fileConfig);
+        if ($fileContent === false) {
+          $this->errors[] = 'Неможливо прочитати файл конфігурації';
+        } else if (!@file_put_contents($fileConfig, $fileContent)) {
+          $this->errors[] = 'Файл конфігурації має бути доступний для запису (chmod 0777 ' . $configFilePartialPath . ')';
+        }
       }
 
       if (!empty($this->errors)) {
@@ -757,7 +762,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   background-color: #e6e6e6;
 }
 .btn:active {
-  background-color: #cccccc                                                                                                                        \9;
+  background-color: #cccccc                                                                                                                         \9;
 }
 .btn:first-child {
   *margin-left: 0;
@@ -783,7 +788,7 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
   -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   background-color: #e6e6e6;
-  background-color: #d9d9d9                                                                                                                        \9;
+  background-color: #d9d9d9                                                                                                                         \9;
   outline: 0;
 }
 .btn[disabled] {
@@ -847,13 +852,13 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
             $sitePath = $progress->get('INSTALL_SITE_PATH');
           } elseif (!empty($_SERVER['REQUEST_URI'])) {
             $sitePath = preg_replace('!install/' . basename(__FILE__) . '[\?.]*$!', '$1', $_SERVER['REQUEST_URI']);
-            $sitePath = rtrim($sitePath, "/");
           }
 
           if (empty($sitePath)) {
             $sitePath = '/';
           }
 
+          $sitePath = rtrim($sitePath, "/") . '/';
 
           if (!empty($_POST)) {
             if ($progress->install()) {
@@ -868,7 +873,6 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
               <a href="<?php echo $sitePath ?><?php echo $progress->get('INSTALL_ADMIN_PATH') ?>/">перейти</a>
               <br>
               login: admin<br>
-
               пароль: 1111<br>
             <?php } else { ?>
               <ul>
@@ -944,10 +948,9 @@ input.slat-4, textarea.slat-4, .uneditable-input.slat-4 {
 
             <div class="slat-12">
               <div class="slat-4">
-                Розсташування сайту:
+                Розташування сайту:
               </div>
               <div class="slat-2 hint--right" data-hint="Якщо сайт розміщується не в кореневому каталозі веб-сервера">
-
                 <input name="INSTALL_SITE_PATH" class="slat-12" type="text" value="<?php echo $sitePath ?>">
               </div>
             </div>

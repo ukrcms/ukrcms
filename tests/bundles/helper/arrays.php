@@ -1,9 +1,11 @@
 <?php
   namespace Test\Ub\Helper;
 
-  use Behat\Behat\Context\BehatContext;
+  use Test\MainContext;
 
-  class Arrays extends BehatContext {
+  class Arrays extends MainContext {
+
+    const N = __CLASS__;
 
     protected $mainArray = array();
 

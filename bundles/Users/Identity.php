@@ -17,7 +17,7 @@
 
       $userTable = Table::instance();
       $select = $userTable->select();
-      $select->where('login = ?', $login);
+      $select->loginIs($login);
       $user = $userTable->fetchOne($select);
       if (!empty($user) and $this->checkPassword($password, $user->password)) {
         $this->user = $user;

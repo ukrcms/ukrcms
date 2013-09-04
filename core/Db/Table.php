@@ -69,11 +69,21 @@
 
     }
 
+    /**
+     * Return relation info as array or null if relation with this name doe not exist
+     * @param $name
+     * @return array|null
+     */
+    public function getRelation($name) {
+      $relations = $this->relations();
+      $name = lcfirst($name);
+      return isset($relations[$name]) ? $relations[$name] : null;
+    }
+
     public function __construct() {
 
-      $stmt = $this->getAdapter()->prepare('SHOW COLUMNS FROM ' . $this->getTableName());
+      $stmt = $this->getAdapter()->prepare('SHOW COLUMNS FROM ' . $this->getAdapter()->quoteIdentifier($this->getTableName()));
       $stmt->execute();
-
       $rawColumnData = $stmt->fetchAll();
 
       foreach ($rawColumnData as $columnInfo) {
@@ -86,6 +96,8 @@
           $this->pk = $columnInfo['Field'];
         }
       }
+
+      $this->init();
     }
 
     public function getAdapter() {
@@ -131,7 +143,7 @@
       return $this->pk;
     }
 
-    private function getWhereAndParams($attributes = false) {
+    protected function getWhereAndParams($attributes = false) {
       if ($attributes === false) {
         return array(
           '1', array()
