@@ -13,6 +13,8 @@
 
     public $successLogoutRoute = null;
 
+    public $directAccess = null;
+
     public function __construct() {
       $this->init();
     }

@@ -21,6 +21,7 @@
       'url' => array(
         'rules' => array(
           '/admin-panel/' => 'ub/admin/index',
+          '/admin-panel/login.html' => 'ub/users/login',
           '/admin-panel/<controller:.*>/<action:[^/]+>' => '<controller>/admin/<action>',
           '/rss.xml' => 'ub/simpleblog/posts/rss',
           '/' => 'ub/simpleblog/posts/mainpage',
@@ -39,6 +40,7 @@
       ),
       'userIdentity' => array(
         'class' => \Ub\Users\Identity::N,
+        'directAccess' => true,
         'loginRoute' => 'ub/users/login',
         'logoutRoute' => 'ub/users/logout',
         'successLoginRoute' => 'ub/admin/index',
