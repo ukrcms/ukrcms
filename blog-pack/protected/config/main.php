@@ -33,7 +33,7 @@
         'baseUrl' => '/ukrcms/blog-pack'
       ),
       'theme' => array(
-        'themeName' => 'azmind',
+        'themeName' => 'designa',
         'layout' => 'main',
         'basePath' => dirname(__FILE__) . '/../../themes',
         'baseUrl' => '/themes',
