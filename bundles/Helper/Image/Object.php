@@ -187,7 +187,8 @@
     }
 
     public function getUrl($niceUrl = false) {
-      return \Uc::app()->url->getUrl() . \Uc::app()->params['filesPath'] . $this->fileStr($niceUrl);
+      $urlPart = \Uc::app()->params['filesPath'] . $this->fileStr($niceUrl);
+      return \Uc::app()->url->getUrl() . str_replace(DIRECTORY_SEPARATOR, '/', $urlPart);
     }
 
     public function getPath() {
