@@ -35,7 +35,7 @@
           'type' => static::RELATION_MANY_TO_MANY,
           'table' => \TestApp\Office\Houses\Table::N,
           'reference' => array(
-            'tableName' => 'uc_office_users_houses',
+            'tableName' => \Uc::app()->db->tablePrefix . 'office_users_houses',
             'myField' => 'user_id',
             'foreignField' => 'house_id',
           )

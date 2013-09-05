@@ -18,7 +18,7 @@
 
     public function relations() {
       return array(
-        'user' => array(
+        'users' => array(
           'type' => static::RELATION_MANY_TO_MANY,
           'table' => \TestApp\Office\Users\Table::N,
           'reference' => array(
