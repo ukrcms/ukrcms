@@ -24,7 +24,7 @@ class Table extends \Uc\Db\Table {
      'passport'=>array(
        'type'=>static::RELATIONS_HAS_ONE,
        'table'=>\App\Passport\Table::N,
-       'foreignField'=>'passport_id',
+       'myField'=>'passport_id',
      )
     );
   }
@@ -42,7 +42,7 @@ echo $user->passport->registrationDate;
 ```
 - type  - тип зв'язку (існує 3 типи зв'язків, вказані вище).
 - table - назва таблиці, в якій знаходяться зв'язані об'єкти.
-- foreignField - поле у таблиці users. У це поле записується номер паспорта.
+- myField - поле у таблиці users. У це поле записується номер паспорта.
 
 Наступний крок це задати зв'язки для таблиці паспорт.
 Ми знаємо що у користувача є 1н паспорт. Отже у кожного паспорта є користувач.
@@ -58,14 +58,14 @@ class Table extends \Uc\Db\Table {
       'User' => array(
         'type' => static::RELATIONS_HAS_ONE,
         'table' => \App\User\Table::N,
-        'myField' => 'passport_id',
+        'foreignField' => 'passport_id',
       )
     );
   }
 }
 ```
-Головна відмінність це поле myField. Цей ключ вказує що поле passport_id знаходиться
-в таблиці Users.
+Головна відмінність це поле foreignField. Цей ключ вказує що поле passport_id знаходиться
+у таблиці Users.
 
 Отже якщо поле знаходиться у таблиці до якої ми описуємо звязок, тоді пишемо myField у іншому випадку foreignField.
 
@@ -82,15 +82,15 @@ class Table extends \TestApp\Table {
       'cars' => array(
         'type' => static::RELATION_ONE_TO_MANY,
         'table' => \TestApp\Office\Cars\Table::N,
-        'myField' => 'user_id'
+        'foreignField' => 'user_id'
       )
     );
   }
 }
 
 ```
-Ключ myField вказує що id користувача зберігається у полі user_id в таблиці Cars.
-Як описати зворотній зв'язок: у авто є один користувач, можня глянути вище ;)
+Ключ foreignField вказує що id користувача зберігається у полі user_id в таблиці Cars.
+Як описати зворотній зв’язок: у авто є один користувач, можня глянути вище ;)
 
 
 ### Багато до багатьох - RELATIONS_MANY_TO_MANY

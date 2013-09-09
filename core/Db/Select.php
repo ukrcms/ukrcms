@@ -370,17 +370,17 @@
           $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->tableName) . ' on ' . $select->tableName . '.' . $select->table->pk() . ' = ' . $relatedTableReference['tableName'] . '.' . $relatedTableReference['foreignField'];
 
         } elseif ($relation['type'] == $table::RELATION_ONE_TO_MANY) {
-          if (!empty($relation['myField'])) {
-            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['myField'];
-          } else {
+          if (!empty($relation['foreignField'])) {
             $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['foreignField'];
+          } else {
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['myField'];
           }
 
         } elseif ($relation['type'] == $table::RELATION_ONE_TO_ONE) {
-          if (!empty($relation['foreignField'])) {
-            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $relation['foreignField'] . ' = ' . $select->getTableName() . '.' . $table->pk();
+          if (!empty($relation['myField'])) {
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $relation['myField'] . ' = ' . $select->getTableName() . '.' . $table->pk();
           } else {
-            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['myField'];
+            $joins[] = 'LEFT JOIN ' . $db->quoteIdentifier($select->getTableName()) . ' on ' . $this->tableName . '.' . $table->pk() . ' = ' . $select->getTableName() . '.' . $relation['foreignField'];
           }
         } else {
           throw new \Exception('Not valid relation type');

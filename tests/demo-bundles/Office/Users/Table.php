@@ -24,12 +24,12 @@
         'passport' => array(
           'type' => static::RELATION_ONE_TO_ONE,
           'table' => \TestApp\Office\Passports\Table::N,
-          'foreignField' => 'passport_id' # field passport_id located in Users table NOT IN Users tab;e
+          'myField' => 'passport_id' # field passport_id located in Users table NOT IN Users tab;e
         ),
         'cars' => array(
           'type' => static::RELATION_ONE_TO_MANY,
           'table' => \TestApp\Office\Cars\Table::N,
-          'myField' => 'user_id' # field user_id located in Cars
+          'foreignField' => 'user_id' # field user_id located in Cars
         ),
         'houses' => array(
           'type' => static::RELATION_MANY_TO_MANY,

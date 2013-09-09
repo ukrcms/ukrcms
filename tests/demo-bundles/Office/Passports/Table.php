@@ -22,7 +22,7 @@
         'user' => array(
           'type' => static::RELATION_ONE_TO_MANY,
           'table' => \TestApp\Office\Users\Table::N,
-          'myField' => 'passport_id'
+          'foreignField' => 'passport_id'
         ),
       );
     }

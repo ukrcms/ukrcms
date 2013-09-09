@@ -185,8 +185,8 @@
               throw new \Exception('You can set relations only in one_to_one type. Current type is ' . $relationType);
             }
 
-            if (empty($relation['foreignField'])) {
-              throw new \Exception('foreignField required in relation');
+            if (empty($relation['myField'])) {
+              throw new \Exception('myField required in relation');
             }
 
             $model = !empty($arguments[0]) ? $arguments[0] : null;
@@ -203,7 +203,7 @@
               throw new \Exception('You can set only model created by table ' . $relation[1]);
             }
 
-            $field = $relation['foreignField'];
+            $field = $relation['myField'];
             $this->$field = $model->pk();
 
             return $this;
@@ -239,20 +239,20 @@
       $table = $tableClassName::instance();
 
       if ($relation['type'] == $table::RELATION_ONE_TO_ONE) {
-        if (!empty($relation['foreignField'])) {
-          $pkField = $this->{$relation['foreignField']};
+        if (!empty($relation['myField'])) {
+          $pkField = $this->{$relation['myField']};
           $item = $table->fetchOne($pkField);
         } else {
           $item = $table->fetchOne(array(
-            $relation['myField'] => $this->pk()
+            $relation['foreignField'] => $this->pk()
           ));
         }
         return $item;
       } elseif ($relation['type'] == $table::RELATION_ONE_TO_MANY) {
-        if (!empty($relation['myField'])) {
-          $items = $table->fetchAll(array($relation['myField'] => $this->pk()));
-        } else if (!empty($relation['foreignField'])) {
-          $items = $this->table->fetchAll(array($relation['foreignField'] => $this->pk()));
+        if (!empty($relation['foreignField'])) {
+          $items = $table->fetchAll(array($relation['foreignField'] => $this->pk()));
+        } else if (!empty($relation['myField'])) {
+          $items = $this->table->fetchAll(array($relation['myField'] => $this->pk()));
         } else {
           throw new \Exception('Not valid relation ' . $name . ' in class ' . get_called_class() . '. Please set myField or foreignField');
         }

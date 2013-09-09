@@ -22,7 +22,7 @@
         'user' => array(
           'type' => static::RELATION_ONE_TO_ONE,
           'table' => \TestApp\Office\users\Table::N,
-          'foreignField' => 'user_id'
+          'myField' => 'user_id'
         ),
       );
     }

@@ -19,12 +19,12 @@
         'category' => array(
           'type' => self::RELATION_ONE_TO_ONE,
           'table' => \Ub\Simpleblog\Categories\Table::N,
-          'foreignField' => 'category_id'
+          'myField' => 'category_id'
         ),
         'comments' => array(
           'type' => self::RELATION_ONE_TO_MANY,
           'table' => \Ub\Simpleblog\Comments\Table::N,
-          'myField' => 'post_id'
+          'foreignField' => 'post_id'
         ),
       );
     }
