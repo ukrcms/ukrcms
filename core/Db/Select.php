@@ -410,6 +410,13 @@
       return $binds;
     }
 
+    public function fetchOne() {
+      return $this->getTable()->fetchOne($this);
+    }
+
+    public function fetchAll() {
+      return $this->getTable()->fetchAll($this);
+    }
 
     protected function getWhereConditions($prepared = false) {
       $whereConditions = array();
@@ -450,7 +457,7 @@
     }
 
     /**
-     * @return null
+     * @return Table
      */
     public function getTable() {
       return $this->table;

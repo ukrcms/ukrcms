@@ -24,7 +24,7 @@
       if (static::$pages === null) {
         $select = static::instance()->select();
         $select->publishedIs(\Ub\Site\Pages\Model::STATUS_PUBLISHED);
-        $data = static::instance()->fetchAll($select);
+        $data = $select->fetchAll();
         foreach ($data as $page) {
           static::$pages[$page->pk()] = $page;
         }
