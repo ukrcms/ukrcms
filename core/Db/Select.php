@@ -43,6 +43,7 @@
 
     protected $joinWithSelect = array();
 
+    protected $foundRows = null;
 
     public function __construct(Table $table) {
 
@@ -415,7 +416,16 @@
     }
 
     public function fetchAll() {
-      return $this->getTable()->fetchAll($this);
+
+      $result = $this->getTable()->fetchAll($this);
+
+      if ($this->limitStart !== false and $this->limitItems !== false) {
+        $this->foundRows = $this->getAdapter()->fetchOne('SELECT FOUND_ROWS()');
+      } else {
+        $this->foundRows = null;
+      }
+
+      return $result;
     }
 
     protected function getWhereConditions($prepared = false) {
@@ -451,6 +461,14 @@
 
       return $whereConditions;
     }
+
+    /**
+     * @return null
+     */
+    public function getFoundRows() {
+      return $this->foundRows;
+    }
+
 
     public function getWhere() {
       return $this->where;

@@ -7,7 +7,6 @@
 
     const N = __CLASS__;
 
-
     /**
      * @Then /^I (add|set) ([a-z]+) (\d+) to ([a-z]+) (\d+)$/
      */
@@ -169,6 +168,22 @@
      */
     public function iInitSelect() {
       $this->select = \TestApp\Office\Users\Table::instance()->select();
+    }
+
+    /**
+     * @Given /^I expect (\d+) rows$/
+     */
+    public function iExpectNumberOfRows($rows) {
+      $select = $this->select;
+      /** @var $select \TestApp\Office\Users\Select */
+      $select->pageLimit(1, 1);
+
+      $items = $select->fetchAll();
+      $currentRowsNum = $select->getFoundRows();
+
+      if ($rows != $currentRowsNum) {
+        throw new \Exception('Expect ' . $rows . ' rows. Current rows num is ' . $currentRowsNum);
+      }
     }
 
     /**

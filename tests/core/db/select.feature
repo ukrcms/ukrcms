@@ -181,3 +181,18 @@ Feature: Check select class
     Given I init select
     When I call name is Co'mpl''ex \"st'\"ring
     Then I expect: .name = 'Co\'mpl\'\'ex \\\"st\'\\\"ring'
+
+  @Code\Db\Select\CheckFoundRows
+  Scenario: Check found condition
+
+    Given I create test data
+    And I init select
+    Then I expect 5 rows
+
+    Given I init select
+    When I call name like F'in%
+    Then I expect 0 rows
+
+    Given I init select
+    When I call id is 1
+    Then I expect 1 rows
