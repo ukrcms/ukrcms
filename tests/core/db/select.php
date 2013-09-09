@@ -154,10 +154,11 @@
         $item->city = 'City for house  ' . $i;
         $item->save();
 
-        $item = $passports->createModel();
-        $item->id = $i;
-        $item->title = 'Passport ' . $i;
-        $item->date = time() + rand(-10000, 10000);
+        $item = $passports->createModel(array(
+          'id' => $i,
+          'title' => 'Passport ' . $i,
+          'date' => time() + rand(-10000, 10000),
+        ));
         $item->save();
 
       }

@@ -101,6 +101,8 @@
             <li><a href="#">Twitter</a></li>
             <li><a href="#">Google+</a></li>
             <li><a href="#">Flickr</a></li>
+            <li><a href="http://ukrcms.com">ukrcms.com</a></li>
+            <li><a href="#">Сайт працює на системі UkrCms</a></li>
           </ul>
 
           <div class="up grid col-one-third ">

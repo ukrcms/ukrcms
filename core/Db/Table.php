@@ -197,11 +197,10 @@
 
       # generate config
       $config = array(
-        'data' => $data,
         'stored' => true
       );
 
-      return $this->createModel($config);
+      return $this->createModel($data, $config);
     }
 
     public function fetchPage($where, $currentPage = false, $onPage = false) {
@@ -215,21 +214,9 @@
         $smt = $this->getAdapter()->execute('Select SQL_CALC_FOUND_ROWS  * from `' . $this->getTableName() . '` where ' . $where . ' Limit ' . (($currentPage - 1) * $onPage) . ', ' . $onPage, $params);
       }
 
-      $itemsData = $smt->fetchAll(\PDO::FETCH_ASSOC);
-      $items = array();
-
-      if (!empty($itemsData)) {
-        # generate config
-        foreach ($itemsData as $key => $data) {
-          $config = array(
-            'data' => $data,
-            'stored' => true
-          );
-
-          $items[$key] = $this->createModel($config);
-          unset($config, $itemsData[$key]);
-        }
-      }
+      $entitiesRawData = $smt->fetchAll(\PDO::FETCH_ASSOC);
+      $items = $this->createModels($entitiesRawData);
+      unset($entitiesRawData);
 
       $rowsNum = $this->getAdapter()->query('SELECT FOUND_ROWS()')->fetchColumn();
 
@@ -328,14 +315,12 @@
       $items = array();
       if (!empty($entitiesRawData)) {
         # generate config and init items
+        $config = array(
+          'stored' => true
+        );
         foreach ($entitiesRawData as $key => $data) {
-          $config = array(
-            'data' => $data,
-            'stored' => true
-          );
-
-          $items[$key] = $this->createModel($config);
-          unset($config, $entitiesRawData[$key]);
+          $items[$key] = $this->createModel($data, $config);
+          unset($entitiesRawData[$key]);
         }
       }
       return $items;
@@ -344,12 +329,13 @@
     /**
      *
      * @author  Ivan Scherbak <dev@funivan.com> 7/20/12
+     * @param array $data
      * @param array $config
      * @return \Uc\Db\Model
      */
-    public function createModel($config = array()) {
+    public function createModel(array $data = array(), $config = array()) {
       $className = $this->getModelClass();
-      $object = new $className($config, $this);
+      $object = new $className($data, $config, $this);
       return $object;
     }
 

@@ -46,10 +46,11 @@
 
     /**
      *
+     * @param array $data
      * @param array $config
      * @param null  $table
      */
-    public function __construct($config = array(), $table = null) {
+    public function __construct(array $data = array(), $config = array(), $table = null) {
 
       if (!empty($table)) {
         $this->setTable($table);
@@ -58,8 +59,8 @@
       if (isset($config['stored'])) {
         $this->stored = $config['stored'];
       }
-      if (!empty($config['data'])) {
-        $this->setFromArray($config['data']);
+      if (!empty($data)) {
+        $this->setFromArray($data);
       }
 
       $this->init();
@@ -260,11 +261,11 @@
         $select = $table->select();
         $relatedTableReference = $relation['reference'];
         $select->join('LEFT JOIN '
-            . $relatedTableReference['tableName']
-            . ' on '
-            . $table->getTableName() . '.' . $table->pk()
-            . ' = '
-            . $relatedTableReference['tableName'] . '.' . $relatedTableReference['foreignField']
+          . $relatedTableReference['tableName']
+          . ' on '
+          . $table->getTableName() . '.' . $table->pk()
+          . ' = '
+          . $relatedTableReference['tableName'] . '.' . $relatedTableReference['foreignField']
         );
 
         $select->where($relation['reference']['tableName'] . '.' . $relation['reference']['myField'] . ' = ? ', $this->pk());
