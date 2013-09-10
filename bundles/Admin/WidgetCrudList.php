@@ -1,7 +1,16 @@
 <?php
   namespace Ub\Admin;
 
-  /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+  /**
+   * Class WidgetCrudList
+   * You can use callback in showFields
+   * <code>
+   * 'title' => function ($model) {
+   *   return 'custom-text - ' . $model->title;
+   * },
+   * </code>
+   * @package Ub\Admin
+   */
   class WidgetCrudList extends \Uc\Widget {
 
     protected $options = array(

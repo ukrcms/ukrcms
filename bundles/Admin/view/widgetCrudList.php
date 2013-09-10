@@ -6,8 +6,8 @@
         <thead>
         <tr>
           <?php
-            $editRoute = $this->getEditRoute();
-            $deleteRoute = $this->getDeleteRoute();
+          $editRoute = $this->getEditRoute();
+          $deleteRoute = $this->getDeleteRoute();
           ?>
           <?php foreach ($this->options['showFields'] as $fieldName => $property) { ?>
             <th scope="col"><?php echo $fieldName ?></th>
@@ -23,7 +23,15 @@
           <tr>
             <?php foreach ($this->options['showFields'] as $fieldName => $property) { ?>
               <td>
-                <?php echo $item->$property ?>
+                <?php
+                if (is_string($property)) {
+                  echo $item->$property;
+                } elseif (is_callable($property)) {
+                  echo $property($item);
+                } else {
+                  throw new \Exception('Not valid field. Must be model property name or function');
+                }
+                ?>
               </td>
             <?php } ?>
             <td>
@@ -37,10 +45,10 @@
       </table>
       <div class="entry">
         <?php
-          echo \Ub\Admin\WidgetPaginator::show(array(
-            'page' => $page,
-            'pages' => $pages,
-          ));
+        echo \Ub\Admin\WidgetPaginator::show(array(
+          'page' => $page,
+          'pages' => $pages,
+        ));
         ?>
         <div class="sep"></div>
       </div>
