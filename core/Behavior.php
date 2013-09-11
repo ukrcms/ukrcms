@@ -22,16 +22,30 @@
      */
     protected $config = array();
 
-    /**
-     * You can simple create behavior if you have owner
-     *
-     * @param       $owner
-     * @param array $config
-     */
-    public function __construct($owner, $config = array()) {
-      $this->owner = $owner;
-      $this->config = $config;
+    public function init() {
+
     }
+
+    /**
+     * @param array $config
+     * @return $this
+     */
+    public function setConfig($config) {
+      $this->config = $config;
+      return $this;
+    }
+
+    /**
+     * Set owner for this behavior
+     *
+     * @param null $owner
+     * @return $this
+     */
+    public function setOwner($owner) {
+      $this->owner = $owner;
+      return $this;
+    }
+
 
     /**
      * Return owner of this behavior

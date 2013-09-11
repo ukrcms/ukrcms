@@ -17,10 +17,13 @@
     }
 
     /**
-     * Attach behavior
+     * Attach behavior.
+     * Set owner and init behavior
+     *
      * <code>
      * public function init(){
-     *  $this->image = new \Ub\Helper\Image\Object($this)
+     *  $this->image = new \Ub\Helper\Image\Object()
+     *  $this->image->owner_field = 'image_data';
      *  $this->attachBehavior('image');
      * }
      * </code>
@@ -28,11 +31,37 @@
      * @return $this
      */
     public function attachBehavior($behaviorName) {
-      $this->behaviors[$behaviorName] = $this->$behaviorName;
+      /** @var $behavior Behavior */
+      $behavior = $this->$behaviorName;
+      $behavior->setOwner($this);
+      $behavior->init();
+      $this->behaviors[$behaviorName] = $behavior;
       return $this;
     }
 
     /**
+     * Run method in all behaviors
+     * <code>
+     *  $this->runAllBehaviors('beforeSave');
+     * </code>
+     * @todo Create test
+     *
+     * @param $methodName
+     * @return $this
+     */
+    public function runAllBehaviors($methodName) {
+      /** @var $behavior Behavior */
+      foreach ($this->behaviors as $behavior) {
+        if ($behavior->hasMethod($methodName)) {
+          $behavior->$methodName();
+        }
+      }
+      return $this;
+    }
+
+    /**
+     * Remove behavior from owner
+     *
      * <code>
      *  $this->removeBehavior('image');
      * </code>
