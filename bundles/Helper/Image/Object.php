@@ -112,18 +112,18 @@
     private function fileStr($niceUrl = false) {
       $type = $this->currentType;
 
-      $this->uid = str_pad($this->uid, $this->pathLevel, '0', STR_PAD_LEFT);
+      $uid = str_pad($this->uid, $this->pathLevel, '0', STR_PAD_LEFT);
 
       if (empty($niceUrl)) {
-        $fileStr = $this->uid . '_' . $type . '.' . $this->extension;
+        $fileStr = $uid . '_' . $type . '.' . $this->extension;
       } else {
-        $fileStr = $this->uid . '_' . $type . DIRECTORY_SEPARATOR . $niceUrl . '.' . $this->extension;
+        $fileStr = $uid . '_' . $type . DIRECTORY_SEPARATOR . $niceUrl . '.' . $this->extension;
       }
 
       $subStr = '';
 
       for ($i = 1; $i <= $this->pathLevel; $i++) {
-        $subStr .= substr($this->uid, $i * -1, 1) . DIRECTORY_SEPARATOR;
+        $subStr .= substr($uid, $i * -1, 1) . DIRECTORY_SEPARATOR;
       }
 
       return $this->path . DIRECTORY_SEPARATOR . $subStr . $fileStr;
