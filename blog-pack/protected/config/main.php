@@ -13,7 +13,7 @@
 
     'components' => array(
       'db' => array(
-        'dsn' => 'mysql:host=localhost;dbname=uc',
+        'dsn' => 'mysql:host=localhost;dbname=uc_test',
         'username' => 'root',
         'password' => '1111',
         'tablePrefix' => 'uc_',
@@ -33,7 +33,7 @@
         'baseUrl' => '/ukrcms/blog-pack'
       ),
       'theme' => array(
-        'themeName' => 'azmind',
+        'themeName' => 'diverso',
         'layout' => 'main',
         'basePath' => dirname(__FILE__) . '/../../themes',
         'baseUrl' => '/themes',
