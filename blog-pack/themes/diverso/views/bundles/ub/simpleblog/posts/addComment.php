@@ -1,4 +1,4 @@
-  <div class="<div class="hentry hentry-post group blog-big">">
+  <div class="<div class="hentry hentry-post group blog-big">
     <p>
       <?php echo $message ?>
     </p>
