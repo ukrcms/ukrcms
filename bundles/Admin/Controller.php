@@ -7,7 +7,12 @@
   class Controller extends \Uc\Controller {
 
     /**
-     * @var type
+     * @var array
+     */
+    public $topMenu = array();
+
+    /**
+     * @var array
      */
     public $leftMenu = array();
 
@@ -23,7 +28,7 @@
       }
 
       \Uc::app()->theme->setThemeName('admin');
-      $this->createLeftMenu();
+      $this->createMenu();
     }
 
     /**
@@ -41,36 +46,43 @@
       $this->renderView('index');
     }
 
-
-    public function createLeftMenu() {
+    public function createMenu() {
 
       if (empty(\Uc::app()->params['bundles'])) {
         return false;
       }
 
-      $bundles = \Uc::app()->params['bundles'];
-      foreach ($bundles as $bundleClassName) {
-        $menu = call_user_func($bundleClassName . '::getAdminMenu');
-        $this->leftMenu = array_merge($this->leftMenu, $menu);
-      }
+      $menuTypes = array(
+        'leftMenu' => 'getAdminMenu',
+        'topMenu' => 'getAdminTopMenu',
+      );
+      foreach ($menuTypes as $menuPosition => $methodName) {
+        $bundles = \Uc::app()->params['bundles'];
 
-      if (empty($this->leftMenu)) {
-        return false;
-      }
-
-      $route = \Uc::app()->url->getRoute();
-      foreach ($this->leftMenu as $moduleName => $urls) {
-        foreach ($urls as $k => $urlInfo) {
-          if (!empty($urlInfo['route'])) {
-            if ($urlInfo['route'] == $route) {
-              $this->leftMenu[$moduleName][$k]['current'] = true;
-            }
-
-            $this->leftMenu[$moduleName][$k]['href'] = \Uc::app()->url->create($urlInfo['route']);
+        $menuItems = array();
+        foreach ($bundles as $bundleClassName) {
+          if (is_callable($bundleClassName . '::' . $methodName)) {
+            $menu = call_user_func($bundleClassName . '::' . $methodName);
+            $menuItems = array_merge($menuItems, $menu);
           }
         }
+
+        $route = \Uc::app()->url->getRoute();
+        foreach ($menuItems as $moduleName => $urls) {
+          foreach ($urls as $k => $urlInfo) {
+            if (!empty($urlInfo['route'])) {
+              if ($urlInfo['route'] == $route) {
+                $menuItems[$moduleName][$k]['current'] = true;
+              }
+
+              $menuItems[$moduleName][$k]['href'] = \Uc::app()->url->create($urlInfo['route']);
+            }
+          }
+        }
+
+        $this->$menuPosition = $menuItems;
       }
-      return $this->leftMenu;
+
     }
 
 

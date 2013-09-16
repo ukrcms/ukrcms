@@ -3,7 +3,7 @@
   padding: 0;
 }
 body {
-  background: #f3f3f3 url(../img/bg_top.jpg) repeat-x;
+  background: #f3f3f3 url(../img/bg_top.jpg) 0 -10px repeat-x;
   color: #bebebe;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
   font-size: 11px;
@@ -51,8 +51,8 @@ button:hover, .button:hover {
 }
 
 #header #top {
-  height: 34px;
-  padding: 14px 20px 0 20px;
+  height: 14px;
+  padding: 10px 20px 0 20px;
 }
 #header #top p {
   text-shadow: #000000 0px 1px 1px;
@@ -62,7 +62,7 @@ button:hover, .button:hover {
 }
 
 #content {
-  margin: 30px 0 30px 0;
+  margin: 15px 0 30px 0;
 }
 #content .b1 {
   background: #ffffff;

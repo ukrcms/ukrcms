@@ -14,7 +14,7 @@
      * @author  Ivan Scherbak <dev@funivan.com> 7/26/12
      * @return array
      */
-    public static function getAdminMenu() {
+    public static function getAdminTopMenu() {
       $menu = array();
 
       $menu['Користувачі'] = array(

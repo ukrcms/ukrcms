@@ -2,9 +2,9 @@
   return array(
     'params' => array(
       'bundles' => array(
-        \Ub\Simpleblog\Bundle::N,
-        \Ub\Users\Bundle::N,
-        \Ub\Site\Bundle::N,
+        '\Ub\Simpleblog\Bundle',
+        '\Ub\Users\Bundle',
+        '\Ub\Site\Bundle',
       ),
       'basePath' => dirname(__FILE__) . '/../..',
       'filesPath' => '/files',
@@ -39,7 +39,7 @@
         'baseUrl' => '/themes',
       ),
       'userIdentity' => array(
-        'class' => \Ub\Users\Identity::N,
+        'class' => '\Ub\Users\Identity',
         'directAccess' => true,
         'loginRoute' => 'ub/users/login',
         'logoutRoute' => 'ub/users/logout',

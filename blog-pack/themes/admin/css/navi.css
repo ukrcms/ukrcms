@@ -1,7 +1,7 @@
 #header #nav {
   height: 27px;
   margin: 0;
-  padding: 5px 20px 0 10px;
+  padding: 18px 20px 0 0;
   position: relative;
 }
 
@@ -12,7 +12,6 @@
   display: inline;
   float: left;
   position: relative;
-  margin: 0 40px 0 0;
   text-align: center;
 }
 #header #nav ul li.upp a {
@@ -22,11 +21,9 @@
   text-align: center;
   text-shadow: #000000 0px 1px 1px;
 }
-#header #nav ul li.upp a:hover {
+#header #nav ul li.upp a:hover, #header #nav ul li.current a, #header #nav ul li a.current {
   color: #f07e01;
-}
-#header #nav ul li.upp a .active {
-  color: #f07e01;
+  text-decoration: none;
 }
 
 #header #nav ul li.upp ul {
