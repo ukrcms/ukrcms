@@ -39,7 +39,7 @@ muhasjo@E430:~$cd ~/www/site/protected/bundles && mkdir Phrases
 muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Table.php
 </pre>
 із таким вмістом:
-<pre>
+```php
 namespace App\Phrases; ///Обовязкого оголошение неймспейс для майбутнього підключення цієї таблиці.
 
 class Table extends \Uc\Db\Table {
@@ -51,18 +51,18 @@ class Table extends \Uc\Db\Table {
     return \Uc::app()->db->tablePrefix.'phrases'; /// підключення до самої таблиці з назвою `uc_phrases`
   }
 }
-</pre>
+```
 Також для використання записів із створеної таблиці, потрібен файл з моделлю "Фрази", вона буде у файлі Model.php:
 <pre>
 muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Model.php
 </pre>
 із вмістом:
-<pre>
+```php
 namespace App\Phrases;
 class Model extends \Uc\Db\Model{
   const N = __CLASS__;
 }
-</pre>
+```
 Оскільки суть данного пакунка дуже проста і не несе ніякого смислового навантаження на саму фразу, окрім як, тільки її виведення.
 Тому дана модель існує тільки для звязку з іншими обєктами системи. Незнаю можливо закручено сказано :), але далі все стане на свої місця з питаннями чому? і як? :).
 
@@ -72,7 +72,7 @@ class Model extends \Uc\Db\Model{
 muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ gedit Controller.php
 </pre>
 із вмістом:
-<pre>
+```php
 namespace App\Phrases;
 class Controller extends \Uc\Controller{
 
@@ -93,7 +93,7 @@ class Controller extends \Uc\Controller{
     return '';                                      /// інакше повертаєм пусту стрічку
   }
 }
-</pre>
+```
 Ось і все, пакунок для виведення випадкової фрази готовий. Використовувати його можна так: `\App\Phrases\Controller::getPhrase()`.
 Але перед нами постає інша проблема, ми немаєм можливості додавати чи видаляти нові фрази. Потрібно робити запити напряму в базу даних, що для нас є не зовсім зручно.
 
@@ -106,7 +106,7 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$ mkdir Admin
 muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$cd Admin && gedit Controller.php
 </pre>
 із таким вмістом:
-<pre>
+```php
 <?
   namespace App\Phrases\Admin;
 
@@ -118,7 +118,7 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases$cd Admin && gedit Controlle
     }
 
   }
-</pre>
+```
 Тут описано тільки підключення таблиці із нашими фразами. Всю іншу роботу повязано з додаванням видаленням та редагуванням записів,
 бере на себе так званий контроллер Crud.
 
@@ -133,7 +133,7 @@ muhasjo@E430:~/www/uc-site/protected/bundles/Phrases/Admin/view$ touch list.php
 </pre>
 
 edit.php містить поле для редагування фрази, в нас це буде звичайна форма з полем типу textarea та кнопки для збереження:
-<pre>
+```html
 <div class="full_w">
   <div class="h_title">Редагування</div>
   <form action="" method="post" enctype="multipart/form-data">
@@ -151,9 +151,9 @@ edit.php містить поле для редагування фрази, в н
 
 </div>
 
-</pre>
+```
 list.php містить тільки опис колонок які будуть показуватить при показі всіх записів:
-<pre>
+```php
 <?
   $widget = new \Ub\Admin\WidgetCrudList();
   $widget->setData($data);
@@ -164,13 +164,13 @@ list.php містить тільки опис колонок які будуть
     'controllerRoute' => \Uc::app()->url->getControllerName()
   ));
   echo $widget->render();
-</pre>
+```
 Ось і все панель адміністрування для даного пакунка готова. Залишилось добавити пункти меню для панелі адміністрування:
  <pre>
  muhasjo@E430:~/www/uc-site/protected/bundles/Phrases/Admin/view$ cd ~/www/uc-site/protected/bundles/Phrases/ && touch Bundle.php
  </pre>
  в файлі Bundle.php описаний масив із назвами пунктів меню та посиланнями на таблицю з редагуванням:
-<pre>
+```php
 
   namespace App\Phrases;
 
@@ -194,7 +194,7 @@ list.php містить тільки опис колонок які будуть
       return $menu;
     }
   }
-</pre>
+```
 Оскільки пакунок вже готовий, для того щоб він запрацював потрібно підключити його в загальній конфігурації системи, у файлі `site/protected/config/main.php`
 розділ `bundles` добавити наш пакунок, тобто дописати до даного масиву таке: `App\Phrases\Bundle::N`.
 Щоб використати пакунок, потріно в файлі `site/themes/theme/views/layouts/main.php`, головний файл шаблон нашої теми, у потрібному місці викликати `<?echo \App\Phrases\Controller::getPhrase();?>`.
