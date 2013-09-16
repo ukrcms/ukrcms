@@ -737,7 +737,7 @@ ol.trackbacklist li {padding:10px 0;}
 /*#respond #submit {color:#666363;background:#eee;width:150px;float:right;margin:0 0 20px 0;padding:10px;font-weight:bold;font-size:0.95em!important;}
 #respond #submit:hover {background-color:#fff;cursor:pointer;color:#000} */
 #respond #submit{background:url("../images/input_pattern.png") repeat-x scroll 0 0 #F3F0F0;color:#4C4B4B;float:right;font-size:.7em!important;letter-spacing:1px;text-transform:uppercase;width:130px;margin:0 0 20px;padding:8px;}
-#respond #submit:hover {background:url("images/input_pattern_hover.png") repeat-x scroll 0 6px #F3F0F0;cursor:pointer;color:#000} 
+#respond #submit:hover {background:url("../images/input_pattern_hover.png") repeat-x scroll 0 6px #F3F0F0;cursor:pointer;color:#000}
 #respond .containerPost {font-size:1.1em}
 img.comment-avatar {margin:20px 0 0 0;border:1px solid #ccc; padding:3px}
 #commentform {}
