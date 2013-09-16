@@ -50,26 +50,26 @@
 
       <h3>Коментувати</h3>
 
-      <form id="#" method="post" action="?addcomment">
+      <form id="commentform" method="post" action="?addcomment">
         <ul>
           <li>
             <label for="author">Ім'я: </label>
-            <input type="text" tabindex="1" size="28" value="" name="name" id="name" required placeholder="Ваше ім'я" class="required" id="author" name="comment[name]">
+            <input type="text" tabindex="1" size="28" value="" name="name"  required placeholder="Ваше ім'я" class="required" id="author" name="comment[name]">
           </li>
 
           <li>
             <label for="email">E-mail: </label>
-            <input type="email" tabindex="2" size="28" value="" name="email" id="email" required placeholder="user@gmail.com" class="required email" id="email" name="comment[email]">
+            <input type="email" tabindex="2" size="28" value="" required placeholder="user@gmail.com" class="required email" id="email" name="comment[email]">
           </li>
 
           <li>
-            <label for="text">Url: </label>
-            <input type="text" tabindex="3" size="28" value="" name="text" id="text" id="text" placeholder="www.site.com" name="comment[url]">
+            <label for="url"><acronym title="Uniform Resource Identifier">URL</acronym></label>
+            <input type="text" tabindex="3" size="28" value="" name="text" id="url" placeholder="www.site.com" name="comment[url]">
           </li>
 
           <li>
             <label for="message">Повідомлення:</label>
-            <textarea tabindex="4" name="message" id="message" cols="5" rows="3" required  class="required" name="comment[comment]"></textarea>
+            <textarea tabindex="4" id="comment" cols="5" rows="3" required  class="required" name="comment[comment]"></textarea>
           </li>
           <li>
             <button type="submit" id="submit" class="button fright">Відіслати</button>
