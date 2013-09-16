@@ -10,7 +10,7 @@
     /**
      * @return array
      */
-    public static function getAdminMenu() {
+    public static function getAdminTopMenu() {
       $menu = array();
       $menu['Сайт'] = array(
         array(

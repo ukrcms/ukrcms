@@ -8,29 +8,16 @@
     <link rel="stylesheet" type="text/css" href="<?php echo \Uc::app()->theme->getUrl() ?>/css/style.css" media="screen"/>
     <link rel="stylesheet" type="text/css" href="<?php echo \Uc::app()->theme->getUrl() ?>/css/navi.css" media="screen"/>
     <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript">
-      $(function () {
-        $(".box .h_title").each(function () {
-          var box = $(this);
-          var ul = box.next("ul");
+    <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/jquery.cookie.js"></script>
 
-          if (ul.find('.current').size() == 0) {
-            ul.hide("normal");
-          }
+    <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.js"></script>
+    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/uploader-1.0/jquery.cleditor.uploader-1.0.js"></script>
+    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/replacer-1.0/jquery.cleditor.replacer-1.0.js"></script>
+    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/ukrTranslit-1.0/jquery.ukrTranslit.js"></script>
+    <link rel="stylesheet" href="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.css"/>
 
-          box.click(function () {
-            ul.slideToggle();
-          });
-        })
-        $('.confirm').click(function () {
-          var txt = $(this).attr('data-confirm');
-          if (typeof txt == "undefined" || txt == '') {
-            txt = 'Confirm action?';
-          }
-          return confirm(txt);
-        })
-      });
-    </script>
+
+    <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/user.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -43,46 +30,44 @@
                 <strong><?php echo(\Uc::app()->userIdentity->getUser()->name); ?></strong>
                 [<a href=" <?php echo \Uc::app()->url->create(\Uc::app()->userIdentity->getLogoutRoute()); ?>">вихід</a>]
               </p>
+
             </div>
           <?php } ?>
           <div class="right">
             <div class="align-right">
-              <p>Time: <strong><?php echo strftime('%Y-%m-%d %H:%M:%S') ?></strong></p>
+              <p>
+                <a href="<?php echo \Uc::app()->url->create('/'); ?>" target="_blank">Перейти на сайт</a>
+                &nbsp;&nbsp;&nbsp;
+                <strong><?php echo strftime('%Y-%m-%d %H:%M:%S') ?></strong>
+              </p>
             </div>
           </div>
 
         </div>
         <div id="nav">
-          <ul style="display: none ">
-            <li class="upp"><a href="#">Main control</a>
-              <ul>
-                <li>&#8250; <a href="">Visit site</a></li>
-                <li>&#8250; <a href="">Reports</a></li>
-                <li>&#8250; <a href="">Add new page</a></li>
-                <li>&#8250; <a href="">Site config</a></li>
-              </ul>
-            </li>
-            <li class="upp"><a href="#">Manage content</a>
-              <ul>
-                <li>&#8250; <a href="">Show all pages</a></li>
-                <li>&#8250; <a href="">Add new page</a></li>
-                <li>&#8250; <a href="">Add new gallery</a></li>
-                <li>&#8250; <a href="">Categories</a></li>
-              </ul>
-            </li>
-            <li class="upp"><a href="#">Users</a>
-              <ul>
-                <li>&#8250; <a href="">Show all uses</a></li>
-                <li>&#8250; <a href="">Add new user</a></li>
-                <li>&#8250; <a href="">Lock users</a></li>
-              </ul>
-            </li>
-            <li class="upp"><a href="#">Settings</a>
-              <ul>
-                <li>&#8250; <a href="">Site configuration</a></li>
-                <li>&#8250; <a href="">Contact Form</a></li>
-              </ul>
-            </li>
+          <ul>
+
+            <?php if (!empty($this->topMenu)) { ?>
+              <?php foreach ($this->topMenu as $sectionName => $items) { ?>
+                <li class="upp"><a href="#">&#8250; <?php echo $sectionName ?></a>
+                  <ul>
+                    <?php foreach ($items as $href => $info) { ?>
+                      <?php
+                      if (is_string($info)) {
+                        $text = $info;
+                      } else {
+                        $href = !empty($info['href']) ? $info['href'] : $href;
+                        $text = $info['text'];
+                      }
+                      ?>
+                      <li class="<?php echo !empty($info['current']) ? 'current' : '' ?>">
+                        <a href="<?php echo $href ?>"> &#8250; <?php echo $text ?></a>
+                      </li>
+                    <?php } ?>
+                  </ul>
+                </li>
+              <?php } ?>
+            <?php } ?>
           </ul>
         </div>
       </div>
@@ -93,7 +78,6 @@
             <?php foreach ($this->leftMenu as $sectionName => $items) { ?>
               <div class="box">
                 <div class="h_title">&#8250; <?php echo $sectionName ?></div>
-
                 <ul>
                   <?php foreach ($items as $href => $info) { ?>
                     <?php
@@ -136,18 +120,6 @@
         </div>
       </div>
     </div>
-
-    <script type="text/javascript" src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.js"></script>
-    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/uploader-1.0/jquery.cleditor.uploader-1.0.js"></script>
-    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/plugins/replacer-1.0/jquery.cleditor.replacer-1.0.js"></script>
-    <script src="<?php echo \Uc::app()->theme->getUrl() ?>/js/ukrTranslit-1.0/jquery.ukrTranslit.js"></script>
-    <link rel="stylesheet" href="<?php echo \Uc::app()->theme->getUrl() ?>/js/cleditor-1.3.0/jquery.cleditor.css"/>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#title').ukrTranslit('#sef');
-        $(".cleditor").cleditor();
-      });
-    </script>
 
   </body>
 </html>
