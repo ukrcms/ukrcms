@@ -197,7 +197,7 @@
         <!-- START COPYRIGHT -->
         <div id="copyright" class="group two-columns">
           <div class="inner group">
-            <p class="left">Copyright <a><strong>Diverso</strong></a> 2013 - Powered by
+            <p class="left">Copyright <a><strong>Diverso</strong></a> 2013 - Сайт працює на системі
               <a href="http://ukrcms.com" target="_blank"><strong>UkrCMS</strong></a></p>
 
             <p class="right">

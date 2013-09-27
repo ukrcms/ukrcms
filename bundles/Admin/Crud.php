@@ -95,10 +95,15 @@
       }
 
       if (isset($_POST['save_and_list']) or isset($_POST['save_and_edit']) or isset($_POST['data'])) {
+        $this->beforeSave($model);
+
         $this->setModelDataFromRequest($model);
 
         if ($model->save()) {
           # redirect user to edit page or list
+
+          $this->afterSave($model);
+
           if (isset($_POST['save_and_list'])) {
             $url = \Uc::app()->url->create(\Uc::app()->url->getControllerName() . '/list');
           } else {
@@ -142,6 +147,14 @@
           }
         }
       }
+    }
+
+    protected function beforeSave($model) {
+
+    }
+
+    protected function afterSave($model) {
+
     }
 
   }

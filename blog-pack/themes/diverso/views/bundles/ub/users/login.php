@@ -14,7 +14,7 @@
 
         </p>
         <p>
-          <button  type="submit">Ввійти</button>
+          <input type="submit" name="submit" value="Ввійти">
         </p>
 
     </form>
