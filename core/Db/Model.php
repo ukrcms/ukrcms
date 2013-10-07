@@ -409,7 +409,7 @@
     }
 
     protected function afterSave() {
-
+      $this->runAllBehaviors('afterSave');
     }
 
     /**
@@ -419,6 +419,7 @@
      * @return boolean
      */
     protected function beforeSave() {
+      $this->runAllBehaviors('beforeSave');
       return true;
     }
 
@@ -429,6 +430,7 @@
      * @return boolean
      */
     protected function beforeDelete() {
+      $this->runAllBehaviors('afterDelete');
       return true;
     }
 
@@ -436,7 +438,7 @@
      * Called after delete
      */
     protected function afterDelete() {
-
+      $this->runAllBehaviors('afterDelete');
     }
 
 
