@@ -7,7 +7,7 @@
    */
   class WidgetPaginator extends \Uc\Widget {
 
-    public function getViewFile() {
+    public function getClassViewFile() {
       return 'widgetPaginator';
     }
   }

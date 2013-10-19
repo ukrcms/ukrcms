@@ -21,15 +21,15 @@
       'showFields' => array(),
     );
 
-    public function getViewFile() {
+    public function getClassViewFile() {
       return 'widgetCrudList';
     }
 
-    protected function beforeRender() {
+    protected function beforeShow() {
       if (empty($this->options['showFields'])) {
         throw new \Exception('Please set ->options[showFields]');
       }
-      parent::beforeRender();
+      parent::beforeShow();
     }
 
 

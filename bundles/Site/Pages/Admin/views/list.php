@@ -1,4 +1,5 @@
 <?php
+
   $widget = new \Ub\Admin\WidgetCrudList();
   $widget->setData($data);
   $widget->setOptions(array(
@@ -7,4 +8,4 @@
     ),
     'controllerRoute' => \Uc::app()->url->getControllerName()
   ));
-  echo $widget->render();
+  echo $widget->show();

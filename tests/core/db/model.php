@@ -11,6 +11,7 @@
      * @Then /^I expect ([a-z]+) (\d+) has (\d+) ([A-Za-z]+)$/
      */
     public function iExpectObjectHas($name, $id, $number, $relation) {
+
       $table = '\TestApp\Office\\' . $this->plural($name) . '\Table';
       $item = $table::instance()->fetchOne($id);
       $related = $item->$relation;
@@ -39,6 +40,7 @@
         throw new \Exception('Expect ' . $number . ' of ' . $relation . '. Current is ' . count($related));
       }
 
+      return true;
     }
 
   }

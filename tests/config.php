@@ -9,5 +9,11 @@
         'password' => TEST_DB_PASS,
         'tablePrefix' => 'uc_',
       ),
+      'theme' => array(
+        'themeName' => 'themeTestName',
+        'layout' => 'main',
+        'basePath' => dirname(__FILE__) . '/../../themes',
+        'baseUrl' => '/themes',
+      ),
     )
   );

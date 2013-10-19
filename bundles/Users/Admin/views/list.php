@@ -1,12 +1,11 @@
 <?php
-
   $widget = new \Ub\Admin\WidgetCrudList();
   $widget->setData($data);
   $widget->setOptions(array(
     'showFields' => array(
-      'key' => 'key',
-      'value' => 'value',
+      'Логін' => 'login',
+      'Ім\'я' => 'name',
     ),
     'controllerRoute' => \Uc::app()->url->getControllerName()
   ));
-  echo $widget->render();
+  echo $widget->show();

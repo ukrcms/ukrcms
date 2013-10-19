@@ -10,7 +10,7 @@
     'controllerRoute' => \Uc::app()->url->getControllerName()
   ));
 
-  echo $widget->render();
+  echo $widget->show();
 
 ?>
 <div class="entry" style="text-align: center;">

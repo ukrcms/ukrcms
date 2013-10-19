@@ -1,7 +1,7 @@
 @Install\Main
 Feature: Check installer
 
-  Scenario Outline: : Check installation
+  Scenario Outline: Check installation
     Given I check <type> installation of package "blog-pack-1.1.zip"
     Given I am on "/install/install.php"
     Then I should see "Встановлення UkrCms"

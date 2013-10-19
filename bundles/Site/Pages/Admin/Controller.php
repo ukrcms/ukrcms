@@ -11,7 +11,7 @@
     }
 
     public function getPageTemplates() {
-      \Uc::app()->theme->getModuleFilePath();
+      \Uc::app()->theme->getViewFilePath();
     }
   }
 

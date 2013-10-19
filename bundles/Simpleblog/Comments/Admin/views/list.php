@@ -30,4 +30,4 @@
     ),
     'controllerRoute' => \Uc::app()->url->getControllerName()
   ));
-  echo $widget->render();
+  echo $widget->show();

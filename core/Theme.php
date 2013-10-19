@@ -12,48 +12,55 @@
      * @author  Ivan Scherbak <dev@funivan.com>
      * @var string
      */
-    public $layout = '';
+    public $layout = null;
 
     /**
      *
-     * @var type
+     * @var string
      */
-    public $basePath = '';
+    public $basePath = null;
 
     /**
      *
-     * @var type
+     * @var string
      */
-    public $baseUrl = '';
+    public $baseUrl = null;
 
     /**
      *
      * @author  Ivan Scherbak <dev@funivan.com>
-     * @var type
+     * @var string
      */
-    public $themeName = '';
+    public $themeName = null;
 
+    /**
+     * @var string
+     */
+    public $viewsDir = 'views';
 
+    /**
+     * @var string
+     */
+    public $templateExtension = '.php';
+
+    /**
+     * @var array
+     */
     protected $values = array();
 
     public function __toString() {
       return $this->themeName;
     }
 
-    public function getViewFilePath($file) {
-      $file = DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . ltrim($file, DIRECTORY_SEPARATOR) . '.php';
-      return $file;
-    }
-
     /**
-     * Get path to view file
+     * Get path to view file from theme
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @param string $file
      * @return string
      */
-    public function getModuleFilePath($file) {
-      $file = DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'bundles' . DIRECTORY_SEPARATOR . ltrim($file, DIRECTORY_SEPARATOR) . '.php';
+    public function getViewFilePath($file) {
+      $file = DIRECTORY_SEPARATOR . $this->viewsDir . DIRECTORY_SEPARATOR . 'bundles' . DIRECTORY_SEPARATOR . trim($file, DIRECTORY_SEPARATOR) . $this->templateExtension;
       return $file;
     }
 
@@ -64,7 +71,8 @@
      * @return string
      */
     public function getLayoutFilePath() {
-      $file = '/views/layouts/' . $this->layout . '.php';
+      $file = '/' . $this->viewsDir . '/layouts/' . $this->layout . $this->templateExtension;
+      $file = \Uc::app()->theme->getAbsoluteFilePath($file);
       return $file;
     }
 
@@ -85,7 +93,7 @@
     }
 
     public function getAbsoluteFilePath($file) {
-      return $this->basePath . DIRECTORY_SEPARATOR . $this->themeName . DIRECTORY_SEPARATOR . ltrim($file, DIRECTORY_SEPARATOR);
+      return $this->basePath . DIRECTORY_SEPARATOR . $this->themeName . DIRECTORY_SEPARATOR . trim($file, DIRECTORY_SEPARATOR);
     }
 
     public function getUrl() {
@@ -103,6 +111,20 @@
 
     public function getValue($name) {
       return isset($this->values[$name]) ? $this->values[$name] : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewsDir() {
+      return $this->viewsDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateExtension() {
+      return $this->templateExtension;
     }
 
   }

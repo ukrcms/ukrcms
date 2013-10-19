@@ -45,7 +45,7 @@
       </table>
       <div class="entry">
         <?php
-        echo \Ub\Admin\WidgetPaginator::show(array(
+        echo \Ub\Admin\WidgetPaginator::run(array(
           'page' => $page,
           'pages' => $pages,
         ));

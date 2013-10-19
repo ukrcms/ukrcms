@@ -86,38 +86,5 @@
     }
 
 
-    /**
-     * Helper function for rendering files from bundles view folder
-     * Used only in backend
-     *
-     * @param string $file
-     * @param array  $data
-     */
-    public function renderView($file, $data = array()) {
-      # render view file
-      $content = $this->renderViewPartial($file, $data);
-      echo $this->renderLayout($content);
-    }
-
-    public function renderLayout($content) {
-      $layoutFile = \Uc::app()->theme->getLayoutFilePath();
-      $layoutFileAbsolute = \Uc::app()->theme->getAbsoluteFilePath($layoutFile);
-      echo $this->renderFile($layoutFileAbsolute, array('content' => $content));
-    }
-
-
-    /**
-     *
-     * @author  Ivan Scherbak <dev@funivan.com>
-     */
-    public function renderViewPartial($controllerViewFile, $data = array()) {
-
-      $controllerViewFile = 'view' . DIRECTORY_SEPARATOR . $controllerViewFile;
-      $object = new \ReflectionObject($this);
-      $file = dirname($object->getFilename()) . DIRECTORY_SEPARATOR . $controllerViewFile . '.php';
-
-      return $this->renderFile($file, $data);
-    }
-
   }
 

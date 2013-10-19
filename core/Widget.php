@@ -1,17 +1,31 @@
 <?php
   namespace Uc;
 
-  abstract class Widget extends Component {
+  class Widget extends Module {
 
     protected $data = array();
 
     protected $options = array();
 
-    abstract protected function getViewFile();
 
-    public function __construct() {
-      $this->init();
+    /**
+     * View file located near class file
+     *
+     * @return string
+     */
+    protected function getClassViewFile() {
+
     }
+
+    /**
+     * View file located in theme folder
+     *
+     * @return string
+     */
+    protected function getViewFile() {
+
+    }
+
 
     public function setData($data) {
       $this->data = $data;
@@ -29,44 +43,41 @@
       return $this->options;
     }
 
+    /**
+     * @return string|void
+     * @throws \Exception
+     */
+    public function show() {
+      $this->beforeShow();
 
-    public function render() {
-      $this->beforeRender();
+      if ($classViewFile = $this->getClassViewFile()) {
+        $content = $this->renderViewPartial($classViewFile, $this->data);
+      } elseif ($themeViewFile = $this->getViewFile()) {
+        $content = $this->renderPartial($themeViewFile, $this->data);
+      } else {
+        throw new \Exception('Please provide view file');
+      }
 
-      extract($this->data);
+      $this->afterShow();
 
-      $file = $this->getFullViewPath($this->getViewFile());
-
-      ob_start();
-      ob_implicit_flush(false);
-      include $file;
-      $content = ob_get_clean();
-      $this->afterRender();
       return $content;
     }
 
-    protected function beforeRender() {
+    protected function beforeShow() {
 
     }
 
-    protected function afterRender() {
+    protected function afterShow() {
 
     }
 
-    public static function show($data = array(), $options = array()) {
+    public static function run($data = array(), $options = array()) {
       $class = get_called_class();
       /** @var $widget \Uc\Widget */
       $widget = new $class();
       $widget->setData($data);
       $widget->setOptions($options);
-      return $widget->render($data, $options);
-    }
-
-    public function getFullViewPath($widgetViewFile) {
-      $controllerViewFile = 'view' . DIRECTORY_SEPARATOR . $widgetViewFile;
-      $object = new \ReflectionObject($this);
-      $file = dirname($object->getFilename()) . DIRECTORY_SEPARATOR . $controllerViewFile . '.php';
-      return $file;
+      return $widget->show($data, $options);
     }
 
   }

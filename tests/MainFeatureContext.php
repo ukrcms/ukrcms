@@ -15,5 +15,6 @@
       $this->useContext(\Test\Uc\Db\Select::N, new \Test\Uc\Db\Select());
       $this->useContext(\Test\Uc\Db\Table::N, new \Test\Uc\Db\Table());
       $this->useContext(\Test\Uc\Db\Model::N, new \Test\Uc\Db\Model());
+      $this->useContext(\Test\Uc\Controller::N, new \Test\Uc\Controller());
     }
   }
