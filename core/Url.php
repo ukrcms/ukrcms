@@ -45,31 +45,31 @@
      *
      * @var boolean
      */
-    private $_urlIsParsed = false;
+    private $urlIsParsed = false;
 
     /**
      *
      * @var string
      */
-    private $_controllerName = '';
+    private $controllerName = '';
 
     /**
      *
      * @var string
      */
-    private $_actionName = '';
+    private $actionName = '';
 
     /**
      *
      * @var string
      */
-    private $_route = '';
+    private $route = '';
 
     /**
      *
      * @var array
      */
-    private $_params = array();
+    private $params = array();
 
     public function init() {
 
@@ -81,9 +81,6 @@
         $this->hostName = $_SERVER[strtoupper($this->protocol) . '_HOST'];
       }
 
-      if (empty($this->protocol) or empty($this->hostName)) {
-        trigger_error('Please set $hostName and $protocol in class ' . get_class($this));
-      }
     }
 
     /**
@@ -91,9 +88,17 @@
      * @throws \Exception
      * @return boolean
      */
-    protected function _parseUrl() {
-      if ($this->_urlIsParsed) {
+    protected function parseUrl() {
+      if ($this->urlIsParsed) {
         return true;
+      }
+
+      if (empty($this->protocol) or empty($this->hostName)) {
+        throw new \Exception('Please set $hostName and $protocol in class ' . get_class($this));
+      }
+
+      if (empty($_SERVER['REQUEST_URI'])) {
+        throw new \Exception('Empty REQUEST_URI');
       }
 
       if (!empty($this->rules)) {
@@ -111,10 +116,11 @@
           $this->requestUrl = '/';
         }
 
-        $this->requestPath = str_replace('?' . $_SERVER['QUERY_STRING'], '', $this->requestUrl);
+        $queryString = !empty($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+        $this->requestPath = str_replace('?' . $queryString, '', $this->requestUrl);
 
         foreach ($this->rules as $routeRegex => $routeAction) {
-          # prepere regexp Url
+          # Prepare regexp Url
           $regex = '!^' . $routeRegex . '[/]{0,1}(\?.*|)$!U';
           $regex = preg_replace('!<([^:]+)>!U', '<$1:.*>', $regex);
           $regex = preg_replace('!<([^:]+):([^>]+)>!U', '(?P<$1>$2)', $regex);
@@ -127,7 +133,7 @@
 
             $match = array_merge(array_filter($match), $_GET);
             if ($match) {
-              $this->_params = $match;
+              $this->params = $match;
             }
             if (strpos($routeAction, '<') !== false) {
               foreach ($match as $key => $value) {
@@ -135,16 +141,16 @@
               }
             }
 
-            $caNames = $this->getControllerActionFromRoute($routeAction);
+            $controllerActionNamesArray = $this->getControllerActionFromRoute($routeAction);
 
-            if (empty($caNames)) {
+            if (empty($controllerActionNamesArray)) {
               throw new \Exception('Route {' . $routeAction . '} is not valid. Can not detect Controller and Action');
             }
-            $this->_controllerName = $caNames[0];
-            $this->_actionName = $caNames[1];
-            $this->_route = $this->_controllerName . '/' . $this->_actionName;
+            $this->controllerName = $controllerActionNamesArray[0];
+            $this->actionName = $controllerActionNamesArray[1];
+            $this->route = $this->controllerName . '/' . $this->actionName;
 
-            $this->_urlIsParsed = true;
+            $this->urlIsParsed = true;
             return true;
           }
         }
@@ -214,8 +220,8 @@
      * @return type
      */
     public function getControllerName() {
-      $this->_parseUrl();
-      return $this->_controllerName;
+      $this->parseUrl();
+      return $this->controllerName;
     }
 
     /**
@@ -223,8 +229,8 @@
      * @return type
      */
     public function getActionName() {
-      $this->_parseUrl();
-      return $this->_actionName;
+      $this->parseUrl();
+      return $this->actionName;
     }
 
     /**
@@ -232,8 +238,8 @@
      * @return type
      */
     public function getParams() {
-      $this->_parseUrl();
-      return $this->_params;
+      $this->parseUrl();
+      return $this->params;
     }
 
     /**
@@ -263,7 +269,7 @@
     }
 
     public function getRoute() {
-      return $this->_route;
+      return $this->route;
     }
 
     public function getHostName() {
