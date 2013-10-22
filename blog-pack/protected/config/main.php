@@ -17,6 +17,7 @@
         'username' => 'root',
         'password' => '1111',
         'tablePrefix' => 'uc_',
+        'tableLangsSuffix' =>"_langs",
       ),
       'url' => array(
         'rules' => array(

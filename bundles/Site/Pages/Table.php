@@ -13,9 +13,7 @@
 
     protected static $pages = null;
 
-    public function getTableName() {
-      return \Uc::app()->db->tablePrefix . 'pages';
-    }
+    protected $tableName = 'pages';
 
     /**
      * @return \Ub\Site\Pages\Model

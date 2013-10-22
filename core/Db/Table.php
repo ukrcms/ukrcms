@@ -58,7 +58,11 @@
     }
 
     public function getTableName() {
-      return $this->tableName;
+      return \Uc::app()->db->tablePrefix .$this->tableName;
+    }
+
+    public function getTableLangName(){
+      return $this->getTableName().\Uc::app()->db->tableLangsSuffix;
     }
 
     /**
