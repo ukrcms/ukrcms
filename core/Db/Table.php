@@ -38,6 +38,10 @@
     private $pk = false;
 
     protected $tableName = '';
+    
+    protected $multiLangTable = '';
+    
+    protected $currentLang = '';
 
     protected $modelClass = '';
 
@@ -61,10 +65,10 @@
       return \Uc::app()->db->tablePrefix .$this->tableName;
     }
 
-    public function getTableLangName(){
+    public function getMultiLangTable(){
       return $this->getTableName().\Uc::app()->db->tableLangsSuffix;
     }
-
+    
     /**
      *
      * @return array
@@ -112,11 +116,12 @@
      * @static
      * @return $this
      */
-    public static function instance() {
+    public static function instance($currentLang  = '') {
       $tableClass = get_called_class();
       if (empty(self::$tableInstances[$tableClass])) {
         self::$tableInstances[$tableClass] = new $tableClass();
       }
+      self::$tableInstances[$tableClass]->currentLang = $currentLang;
       return self::$tableInstances[$tableClass];
     }
 
@@ -238,6 +243,11 @@
      */
     public function fetchAll($select = false) {
       if ($select instanceof \Uc\Db\Select) {
+       
+        //  bind multilanguage table
+        $select->cols('*');
+        $select->where($this->getMultiLangTable().'.table_lang_id='.$this->getTableName().'.id');
+        
         $sql = $select->getQuery();
         $params = $select->getBinds();
       } else {
