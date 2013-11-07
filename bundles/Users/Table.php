@@ -10,6 +10,8 @@
 
     protected $modelClass = Model::N;
 
+    protected $hasMultiLangTable = false;
+
     public function getTableName() {
       return \Uc::app()->db->tablePrefix . 'user';
     }

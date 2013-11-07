@@ -39,8 +39,8 @@
 
     protected $tableName = '';
     
-    protected $multiLangTable = '';
-    
+    protected $hasMultiLangTable = true;
+
     protected $currentLang = '';
 
     protected $modelClass = '';
@@ -91,8 +91,16 @@
     public function __construct() {
 
       $stmt = $this->getAdapter()->prepare('SHOW COLUMNS FROM ' . $this->getAdapter()->quoteIdentifier($this->getTableName()));
+
       $stmt->execute();
       $rawColumnData = $stmt->fetchAll();
+
+      if($this->hasMultiLangTable){
+        $stmt = $this->getAdapter()->prepare('SHOW COLUMNS FROM ' . $this->getAdapter()->quoteIdentifier($this->getMultiLangTable()));
+        $stmt->execute();
+        $rawColumnDataMultiLang = $stmt->fetchAll();
+        $rawColumnData = array_merge($rawColumnData, $rawColumnDataMultiLang);
+      }
 
       foreach ($rawColumnData as $columnInfo) {
 
@@ -190,6 +198,22 @@
      */
     public function fetchOne($select) {
       if ($select instanceof \Uc\Db\Select) {
+
+        if($this->hasMultiLangTable){
+          //  bind multilanguage table
+
+          $select->cols('*');
+          $select->join('LEFT JOIN '
+          .$this->getMultiLangTable().
+          ' ON '
+          .$this->getTableName().
+          '.id = '.
+          $this->getMultiLangTable().
+          '.table_lang_id');
+
+          $select->where($this->getMultiLangTable().'.lang='.'\'en\'');
+        }
+
         $sql = $select->getQuery();
         $params = $select->getBinds();
       } else {
@@ -214,6 +238,21 @@
 
     public function fetchPage($where, $currentPage = false, $onPage = false) {
       if ($where instanceof \Uc\Db\Select) {
+
+        if($this->hasMultiLangTable){
+          //  bind multilanguage table
+
+          $where->join('LEFT JOIN '
+          .$this->getMultiLangTable().
+          ' ON '
+          .$this->getTableName().
+          '.id = '.
+          $this->getMultiLangTable().
+          '.table_lang_id');
+
+          $where->where($this->getMultiLangTable().'.lang='.'\'ua\'');
+        }
+
         $query = $where->getQuery();
         $params = $where->getBinds();
         $onPage = $where->getLimitItems();
@@ -243,11 +282,21 @@
      */
     public function fetchAll($select = false) {
       if ($select instanceof \Uc\Db\Select) {
-       
-        //  bind multilanguage table
-        $select->cols('*');
-        $select->where($this->getMultiLangTable().'.table_lang_id='.$this->getTableName().'.id');
-        
+
+        if($this->hasMultiLangTable){
+          //  bind multilanguage table
+
+          $select->join('LEFT JOIN '
+            .$this->getMultiLangTable().
+          ' ON '
+          .$this->getTableName().
+          '.id = '.
+          $this->getMultiLangTable().
+          '.table_lang_id');
+
+          $select->where($this->getMultiLangTable().'.lang='.'\'ua\'');
+        }
+
         $sql = $select->getQuery();
         $params = $select->getBinds();
       } else {

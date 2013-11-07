@@ -8,6 +8,8 @@
 
     const N = __CLASS__;
 
+    protected $hasMultiLangTable = false;
+
     public function getTableName() {
       return \Uc::app()->db->tablePrefix . 'comments';
     }

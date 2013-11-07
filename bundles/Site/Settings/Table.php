@@ -12,6 +12,8 @@
 
     protected static $settings = null;
 
+    protected $hasMultiLangTable = false;
+
     public function getTableName() {
       return \Uc::app()->db->tablePrefix . 'settings';
     }

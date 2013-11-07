@@ -13,7 +13,7 @@
 
     'components' => array(
       'db' => array(
-        'dsn' => 'mysql:host=localhost;dbname=uc',
+        'dsn' => 'mysql:host=localhost;dbname=uc_blog',
         'username' => 'root',
         'password' => '1111',
         'tablePrefix' => 'uc_',
