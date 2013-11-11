@@ -211,14 +211,29 @@
           $this->getMultiLangTable().
           '.table_lang_id');
 
-          $select->where($this->getMultiLangTable().'.lang='.'\'en\'');
+          $select->where($this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\'');
         }
 
         $sql = $select->getQuery();
         $params = $select->getBinds();
       } else {
         list($where, $params) = $this->getWhereAndParams($select);
-        $sql = 'Select * from `' . $this->getTableName() . '` where ' . $where . ' Limit 1';
+
+
+        if($this->hasMultiLangTable){
+          $joinLangTable = ' LEFT JOIN `'
+          .$this->getMultiLangTable().
+          '` ON `'
+          .$this->getTableName().
+          '`.`id` = `'.
+          $this->getMultiLangTable().
+          '`.`table_lang_id`'.
+            ' WHERE '.$this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\''.
+            ' AND ';
+        }else{
+          $joinLangTable = ' where ';
+        }
+        $sql = 'Select * from `' . $this->getTableName().'`'.$joinLangTable . $where . ' Limit 1';
       }
       # fetch data
       $smt = $this->getAdapter()->execute($sql, $params);
@@ -241,7 +256,7 @@
 
         if($this->hasMultiLangTable){
           //  bind multilanguage table
-
+          $where->cols('*');
           $where->join('LEFT JOIN '
           .$this->getMultiLangTable().
           ' ON '
@@ -250,7 +265,7 @@
           $this->getMultiLangTable().
           '.table_lang_id');
 
-          $where->where($this->getMultiLangTable().'.lang='.'\'ua\'');
+          $where->where($this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\'');
         }
 
         $query = $where->getQuery();
@@ -259,7 +274,21 @@
         $smt = $this->getAdapter()->execute($query, $params);
       } else {
         list($where, $params) = $this->getWhereAndParams($where);
-        $smt = $this->getAdapter()->execute('Select SQL_CALC_FOUND_ROWS  * from `' . $this->getTableName() . '` where ' . $where . ' Limit ' . (($currentPage - 1) * $onPage) . ', ' . $onPage, $params);
+
+        if($this->hasMultiLangTable){
+          $joinLangTable = ' LEFT JOIN `'
+            .$this->getMultiLangTable().
+            '` ON `'
+            .$this->getTableName().
+            '`.`id` = `'.
+            $this->getMultiLangTable().
+            '`.`table_lang_id`'.
+            ' WHERE '.$this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\''.
+            ' AND ';
+        }else{
+          $joinLangTable = ' where ';
+        }
+        $smt = $this->getAdapter()->execute('Select SQL_CALC_FOUND_ROWS  * from `' . $this->getTableName() .'`'.$joinLangTable . $where . ' Limit ' . (($currentPage - 1) * $onPage) . ', ' . $onPage, $params);
       }
 
       $entitiesRawData = $smt->fetchAll(\PDO::FETCH_ASSOC);
@@ -285,7 +314,7 @@
 
         if($this->hasMultiLangTable){
           //  bind multilanguage table
-
+          $select->cols('*');
           $select->join('LEFT JOIN '
             .$this->getMultiLangTable().
           ' ON '
@@ -294,14 +323,29 @@
           $this->getMultiLangTable().
           '.table_lang_id');
 
-          $select->where($this->getMultiLangTable().'.lang='.'\'ua\'');
+          $select->where($this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\'');
         }
 
         $sql = $select->getQuery();
         $params = $select->getBinds();
       } else {
         list($where, $params) = $this->getWhereAndParams($select);
-        $sql = 'Select * from `' . $this->getTableName() . '` where ' . $where;
+
+        if($this->hasMultiLangTable){
+          $joinLangTable = ' LEFT JOIN `'
+            .$this->getMultiLangTable().
+            '` ON `'
+            .$this->getTableName().
+            '`.`id` = `'.
+            $this->getMultiLangTable().
+            '`.`table_lang_id`'.
+            ' WHERE '.$this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\''.
+            ' AND ';
+        }else{
+          $joinLangTable = ' where ';
+        }
+
+        $sql = 'Select * from `' . $this->getTableName() . '`'.$joinLangTable. $where;
       }
 
       $smt = $this->getAdapter()->execute($sql, $params);

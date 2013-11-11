@@ -31,7 +31,8 @@
           '/<sef>.html' => 'ub/site/pages/view',
           '/<controller:.*>/<action:[^/]+>' => '<controller>/<action>',
         ),
-        'baseUrl' => '/ukrcms/blog-pack'
+        'baseUrl' => '/ukrcms/blog-pack',
+        'defaultLang'=> 'ua',
       ),
       'theme' => array(
         'themeName' => 'diverso',
