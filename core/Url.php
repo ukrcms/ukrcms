@@ -95,6 +95,18 @@
       return $this->controllerName;
     }
 
+    /*
+     * @return bool
+     */
+    protected function canUseLangChar(){
+        if($this->getCurrentLang() === $this->defaultLang){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+
     /**
      *
      * @throws \Exception
@@ -218,7 +230,10 @@
     }
 
     public function getAbsoluteRequestUrl() {
-      return $this->getUrl() .'/'.$this->getCurrentLang(). $this->requestUrl;
+        if($this->canUseLangChar())
+            return $this->getUrl() .'/'.$this->getCurrentLang(). $this->requestUrl;
+        else
+            return $this->getUrl() . $this->requestUrl;
     }
 
     /**
@@ -296,7 +311,11 @@
         }
       }
 
-      $url = $this->getUrl() . '/' . $this->getCurrentLang() . $url;
+      if(!$this->canUseLangChar()){
+        $url = $this->getUrl() . $url;    
+      }else{
+        $url = $this->getUrl() . '/' . $this->getCurrentLang() . $url;
+      }
       return $url;
     }
 
