@@ -41,6 +41,11 @@
     
     protected $hasMultiLangTable = true;
 
+    /*
+     * array fields in table
+     */
+    protected $fieldsToTable = array();
+
     protected $currentLang = '';
 
     protected $modelClass = '';
@@ -94,11 +99,15 @@
 
       $stmt->execute();
       $rawColumnData = $stmt->fetchAll();
+      $this->setFieldsInTable($this->getTableName(), $rawColumnData);
 
       if($this->hasMultiLangTable){
         $stmt = $this->getAdapter()->prepare('SHOW COLUMNS FROM ' . $this->getAdapter()->quoteIdentifier($this->getMultiLangTable()));
         $stmt->execute();
         $rawColumnDataMultiLang = $stmt->fetchAll();
+
+        $this->setFieldsInTable($this->getMultiLangTable(), $rawColumnDataMultiLang);
+
         $rawColumnData = array_merge($rawColumnData, $rawColumnDataMultiLang);
       }
 
@@ -114,6 +123,28 @@
       }
 
       $this->init();
+    }
+
+    private function setFieldsInTable($tableName, $data = array()){
+
+      foreach($data as $item){
+        $this->fieldsToTable[$tableName][] = $item['Field'];
+      }
+
+    }
+
+    /*
+     * find table name by field
+     */
+    private function getTableNameByField($fieldName){
+
+      foreach($this->fieldsToTable as $table){
+
+        $item = array_search($fieldName, $table);
+        if($item !== false)
+          return key($this->fieldsToTable);
+      }
+      return false;
     }
 
     public function getAdapter() {
@@ -364,12 +395,16 @@
      * @return mixed (boolean | integer)
      */
     public function insert($fields) {
-      $set = $params = array();
+      $set = $params = $tables = array();
+      $fields['lang'] = Uc::app()->url->getCurrentLang();
+
       foreach ($fields as $key => $value) {
-        $params[] = $value;
-        $set[] = '`' . $key . '` = ? ';
+        $tables[$this->getTableNameByField($key)]['params'][]= $params[] = $value;
+        $tables[$this->getTableNameByField($key)]['set'][]= $set[] = '`' . $key . '` = ? ';
       }
 
+
+      
       $sql = 'Insert into ' . $this->getTableName() . ' Set ' . implode(', ', $set);
       $smt = $this->getAdapter()->execute($sql, $params);
       $pk = $this->getAdapter()->lastInsertId();
