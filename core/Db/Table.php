@@ -38,13 +38,13 @@
     private $pk = false;
 
     protected $tableName = '';
-    
+
     protected $hasMultiLangTable = true;
 
     /*
      * array fields in table
      */
-    protected $fieldsToTable = array();
+    protected $fieldsInTable = array();
 
     protected $currentLang = '';
 
@@ -67,13 +67,13 @@
     }
 
     public function getTableName() {
-      return \Uc::app()->db->tablePrefix .$this->tableName;
+      return \Uc::app()->db->tablePrefix . $this->tableName;
     }
 
-    public function getMultiLangTable(){
-      return $this->getTableName().\Uc::app()->db->tableLangsSuffix;
+    public function getMultiLangTable() {
+      return $this->getTableName() . \Uc::app()->db->tableLangsSuffix;
     }
-    
+
     /**
      *
      * @return array
@@ -99,9 +99,10 @@
 
       $stmt->execute();
       $rawColumnData = $stmt->fetchAll();
+
       $this->setFieldsInTable($this->getTableName(), $rawColumnData);
 
-      if($this->hasMultiLangTable){
+      if ($this->hasMultiLangTable) {
         $stmt = $this->getAdapter()->prepare('SHOW COLUMNS FROM ' . $this->getAdapter()->quoteIdentifier($this->getMultiLangTable()));
         $stmt->execute();
         $rawColumnDataMultiLang = $stmt->fetchAll();
@@ -125,10 +126,10 @@
       $this->init();
     }
 
-    private function setFieldsInTable($tableName, $data = array()){
+    private function setFieldsInTable($tableName, $data = array()) {
 
-      foreach($data as $item){
-        $this->fieldsToTable[$tableName][] = $item['Field'];
+      foreach ($data as $item) {
+        $this->fieldsInTable[$tableName][] = $item['Field'];
       }
 
     }
@@ -136,13 +137,13 @@
     /*
      * find table name by field
      */
-    private function getTableNameByField($fieldName){
+    private function getTableNameByField($fieldName) {
 
-      foreach($this->fieldsToTable as $table){
+      foreach ($this->fieldsInTable as $key => $value) {
 
-        $item = array_search($fieldName, $table);
-        if($item !== false)
-          return key($this->fieldsToTable);
+        $item = array_search($fieldName, $value);
+        if ($item != false)
+          return $key;
       }
       return false;
     }
@@ -155,7 +156,7 @@
      * @static
      * @return $this
      */
-    public static function instance($currentLang  = '') {
+    public static function instance($currentLang = '') {
       $tableClass = get_called_class();
       if (empty(self::$tableInstances[$tableClass])) {
         self::$tableInstances[$tableClass] = new $tableClass();
@@ -230,19 +231,19 @@
     public function fetchOne($select) {
       if ($select instanceof \Uc\Db\Select) {
 
-        if($this->hasMultiLangTable){
+        if ($this->hasMultiLangTable) {
           //  bind multilanguage table
 
           $select->cols('*');
           $select->join('LEFT JOIN '
-          .$this->getMultiLangTable().
-          ' ON '
-          .$this->getTableName().
-          '.id = '.
-          $this->getMultiLangTable().
-          '.table_lang_id');
+            . $this->getMultiLangTable() .
+            ' ON '
+            . $this->getTableName() .
+            '.id = ' .
+            $this->getMultiLangTable() .
+            '.table_lang_id');
 
-          $select->where($this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\'');
+          $select->where($this->getMultiLangTable() . '.lang=\'' . \Uc::app()->url->getCurrentLang() . '\'');
         }
 
         $sql = $select->getQuery();
@@ -250,21 +251,20 @@
       } else {
         list($where, $params) = $this->getWhereAndParams($select);
 
-
-        if($this->hasMultiLangTable){
+        if ($this->hasMultiLangTable) {
           $joinLangTable = ' LEFT JOIN `'
-          .$this->getMultiLangTable().
-          '` ON `'
-          .$this->getTableName().
-          '`.`id` = `'.
-          $this->getMultiLangTable().
-          '`.`table_lang_id`'.
-            ' WHERE '.$this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\''.
+            . $this->getMultiLangTable() .
+            '` ON `'
+            . $this->getTableName() .
+            '`.`id` = `' .
+            $this->getMultiLangTable() .
+            '`.`table_lang_id`' .
+            ' WHERE ' . $this->getMultiLangTable() . '.lang=\'' . \Uc::app()->url->getCurrentLang() . '\'' .
             ' AND ';
-        }else{
+        } else {
           $joinLangTable = ' where ';
         }
-        $sql = 'Select * from `' . $this->getTableName().'`'.$joinLangTable . $where . ' Limit 1';
+        $sql = 'Select * from `' . $this->getTableName() . '`' . $joinLangTable . $where . ' Limit 1';
       }
       # fetch data
       $smt = $this->getAdapter()->execute($sql, $params);
@@ -285,18 +285,18 @@
     public function fetchPage($where, $currentPage = false, $onPage = false) {
       if ($where instanceof \Uc\Db\Select) {
 
-        if($this->hasMultiLangTable){
+        if ($this->hasMultiLangTable) {
           //  bind multilanguage table
           $where->cols('*');
           $where->join('LEFT JOIN '
-          .$this->getMultiLangTable().
-          ' ON '
-          .$this->getTableName().
-          '.id = '.
-          $this->getMultiLangTable().
-          '.table_lang_id');
+            . $this->getMultiLangTable() .
+            ' ON '
+            . $this->getTableName() .
+            '.id = ' .
+            $this->getMultiLangTable() .
+            '.table_lang_id');
 
-          $where->where($this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\'');
+          $where->where($this->getMultiLangTable() . '.lang=\'' . \Uc::app()->url->getCurrentLang() . '\'');
         }
 
         $query = $where->getQuery();
@@ -306,20 +306,20 @@
       } else {
         list($where, $params) = $this->getWhereAndParams($where);
 
-        if($this->hasMultiLangTable){
+        if ($this->hasMultiLangTable) {
           $joinLangTable = ' LEFT JOIN `'
-            .$this->getMultiLangTable().
+            . $this->getMultiLangTable() .
             '` ON `'
-            .$this->getTableName().
-            '`.`id` = `'.
-            $this->getMultiLangTable().
-            '`.`table_lang_id`'.
-            ' WHERE '.$this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\''.
+            . $this->getTableName() .
+            '`.`id` = `' .
+            $this->getMultiLangTable() .
+            '`.`table_lang_id`' .
+            ' WHERE ' . $this->getMultiLangTable() . '.lang=\'' . \Uc::app()->url->getCurrentLang() . '\'' .
             ' AND ';
-        }else{
+        } else {
           $joinLangTable = ' where ';
         }
-        $smt = $this->getAdapter()->execute('Select SQL_CALC_FOUND_ROWS  * from `' . $this->getTableName() .'`'.$joinLangTable . $where . ' Limit ' . (($currentPage - 1) * $onPage) . ', ' . $onPage, $params);
+        $smt = $this->getAdapter()->execute('Select SQL_CALC_FOUND_ROWS  * from `' . $this->getTableName() . '`' . $joinLangTable . $where . ' Limit ' . (($currentPage - 1) * $onPage) . ', ' . $onPage, $params);
       }
 
       $entitiesRawData = $smt->fetchAll(\PDO::FETCH_ASSOC);
@@ -343,18 +343,18 @@
     public function fetchAll($select = false) {
       if ($select instanceof \Uc\Db\Select) {
 
-        if($this->hasMultiLangTable){
+        if ($this->hasMultiLangTable) {
           //  bind multilanguage table
           $select->cols('*');
           $select->join('LEFT JOIN '
-            .$this->getMultiLangTable().
-          ' ON '
-          .$this->getTableName().
-          '.id = '.
-          $this->getMultiLangTable().
-          '.table_lang_id');
+            . $this->getMultiLangTable() .
+            ' ON '
+            . $this->getTableName() .
+            '.id = ' .
+            $this->getMultiLangTable() .
+            '.table_lang_id');
 
-          $select->where($this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\'');
+          $select->where($this->getMultiLangTable() . '.lang=\'' . \Uc::app()->url->getCurrentLang() . '\'');
         }
 
         $sql = $select->getQuery();
@@ -362,21 +362,21 @@
       } else {
         list($where, $params) = $this->getWhereAndParams($select);
 
-        if($this->hasMultiLangTable){
+        if ($this->hasMultiLangTable) {
           $joinLangTable = ' LEFT JOIN `'
-            .$this->getMultiLangTable().
+            . $this->getMultiLangTable() .
             '` ON `'
-            .$this->getTableName().
-            '`.`id` = `'.
-            $this->getMultiLangTable().
-            '`.`table_lang_id`'.
-            ' WHERE '.$this->getMultiLangTable().'.lang=\''.\Uc::app()->url->getCurrentLang().'\''.
+            . $this->getTableName() .
+            '`.`id` = `' .
+            $this->getMultiLangTable() .
+            '`.`table_lang_id`' .
+            ' WHERE ' . $this->getMultiLangTable() . '.lang=\'' . \Uc::app()->url->getCurrentLang() . '\'' .
             ' AND ';
-        }else{
+        } else {
           $joinLangTable = ' where ';
         }
 
-        $sql = 'Select * from `' . $this->getTableName() . '`'.$joinLangTable. $where;
+        $sql = 'Select * from `' . $this->getTableName() . '`' . $joinLangTable . $where;
       }
 
       $smt = $this->getAdapter()->execute($sql, $params);
@@ -395,27 +395,66 @@
      * @return mixed (boolean | integer)
      */
     public function insert($fields) {
-      $set = $params = $tables = array();
-      $fields['lang'] = Uc::app()->url->getCurrentLang();
 
-      foreach ($fields as $key => $value) {
-        $tables[$this->getTableNameByField($key)]['params'][]= $params[] = $value;
-        $tables[$this->getTableNameByField($key)]['set'][]= $set[] = '`' . $key . '` = ? ';
-      }
+      if ($this->hasMultiLangTable) {
 
+        $set = $params = $tables = array();
+        $fields['lang'] = \Uc::app()->url->getCurrentLang();
 
-      
-      $sql = 'Insert into ' . $this->getTableName() . ' Set ' . implode(', ', $set);
-      $smt = $this->getAdapter()->execute($sql, $params);
-      $pk = $this->getAdapter()->lastInsertId();
-      $error = $smt->errorCode();
+        foreach ($fields as $key => $value) {
+          $tableName = $this->getTableNameByField($key);
 
-      if ($error == '00000' and empty($pk)) {
-        # pk is not auto increment and record was creaded
-        return true;
+          $tables[$tableName]['params'][] = $params[] = $value;
+          $tables[$tableName]['set'][] = $set[] = '`' . $key . '` = ? ';
+        }
+
+        $sql = 'Insert into ' . $this->getTableName() . ' Set ' . implode(', ', $tables[$this->getTableName()]['set']);
+        $smt = $this->getAdapter()->execute($sql, $tables[$this->getTableName()]['params']);
+        $pk = $this->getAdapter()->lastInsertId();
+        $error = $smt->errorCode();
+
+        //  insert row into multilanguage table
+        foreach (\Uc::app()->url->getAvailableLanguages() as $lang) {
+          $table = $tables[$this->getMultiLangTable()];
+          //  set bind to lang table row
+          $table['params'][] = $pk;
+          $table['set'][] = '`table_lang_id` = ? ';
+
+          //  set bind to lang
+          $table['params'][array_search('`lang` = ? ',$table['set'])] = $lang;
+
+          $sql = 'Insert into ' . $this->getMultiLangTable() . ' Set ' . implode(', ', $table['set']);
+          $smt = $this->getAdapter()->execute($sql, $table['params']);
+          $error .= "\n" . $smt->errorCode();
+        }
+
+        if ($error == '00000' and empty($pk)) {
+          # pk is not auto increment and record was creaded
+          return true;
+        } else {
+          #
+          return $pk;
+        }
       } else {
-        #
-        return $pk;
+
+        $set = $params = array();
+        foreach ($fields as $key => $value) {
+          $params[] = $value;
+          $set[] = '`' . $key . '` = ? ';
+        }
+
+        $sql = 'Insert into ' . $this->getTableName() . ' Set ' . implode(', ', $set);
+        $smt = $this->getAdapter()->execute($sql, $params);
+        $pk = $this->getAdapter()->lastInsertId();
+        $error = $smt->errorCode();
+
+        if ($error == '00000' and empty($pk)) {
+          # pk is not auto increment and record was creaded
+          return true;
+        } else {
+          #
+          return $pk;
+        }
       }
     }
 

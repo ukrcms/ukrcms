@@ -13,6 +13,8 @@
 
     const PK_VAR = 'pk';
 
+    const AJAX_VAR = 'getajax';
+
     /**
      * @return \Uc\Db\Table
      */
@@ -74,7 +76,11 @@
       $data[static::PAGE_VAR] = $page;
       $data[static::PAGE_ON_VAR] = $onPage;
 
-      $this->renderView('list', $data);
+      if (!$this->isUseAjax()) {
+        $this->renderView('list', $data);
+      } else {
+        echo $this->renderViewPartial('list', $data);
+      }
     }
 
     protected function beforeList($select) {
@@ -118,9 +124,16 @@
         }
       }
 
-      $this->renderView('edit', array(
-        'model' => $model,
-      ));
+      if (!$this->isUseAjax()) {
+
+        $this->renderView('edit', array(
+          'model' => $model,
+        ));
+      } else {
+        echo $this->renderViewPartial('edit', array(
+          'model' => $model,
+        ));
+      }
     }
 
     protected function setModelDataFromRequest($model) {
@@ -157,4 +170,10 @@
 
     }
 
+    /**
+     * @return bool
+     */
+    protected function isUseAjax() {
+      return empty($_REQUEST[self::AJAX_VAR]) ? false : $_REQUEST[self::AJAX_VAR] == true;
+    }
   }

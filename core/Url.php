@@ -95,18 +95,23 @@
       return $this->controllerName;
     }
 
-    /*
-     * @return bool
+    /**
+     * @throws \Exception
+     * @return false if current language is default language
      */
     protected function canUseLangChar(){
-        if($this->getCurrentLang() === $this->defaultLang){
+
+      if (!isset($this->multiLanguages) && !isset($this->multiLanguages['defaultLanguage'])){
+        throw new \Exception('Please set multiLanguages and defaultLanguage in class ' . get_class($this));
+      }
+
+      if($this->getCurrentLang() === $this->multiLanguages['defaultLanguage']){
             return false;
         }else{
             return true;
         }
     }
     
-
     /**
      *
      * @throws \Exception
@@ -236,6 +241,13 @@
             return $this->getUrl() . $this->requestUrl;
     }
 
+    public function getAbsoluteRequestUrlByLang($lang = null){
+      if($lang === null)
+        return $this->getAbsoluteRequestUrl();
+
+      return $this->getUrl() .'/'.$lang. $this->requestUrl;
+    }
+
     /**
      * Absolute url to index
      *
@@ -261,8 +273,9 @@
     public function getCurrentLang() {
 
       if (empty($this->currentLang)) {
-        if (isset($this->defaultLang)) {
-          $this->currentLang = $this->defaultLang;
+        if (isset($this->multiLanguages)
+          && isset($this->multiLanguages['defaultLanguage'])) {
+          $this->currentLang = $this->multiLanguages['defaultLanguage'];
         } else {
           $this->currentLang = 'ua';
         }
@@ -270,12 +283,19 @@
       return $this->currentLang;
     }
 
+    /**
+     * @return array of available Languages
+     */
+    public function getAvailableLanguages(){
+      return $this->multiLanguages['availableLanguages'];
+    }
+
     public function redirectToRoute($route, $params = array(), $code = null) {
       $url = $this->create($route, $params);
       $this->redirect($url, $code);
     }
 
-    public function create($route, $params = array()) {
+    public function create($route, $params = array(), $lang = null) {
       $url = $route;
       if (empty($url) or $url != '/') {
 

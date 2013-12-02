@@ -33,6 +33,12 @@
 
             </div>
           <?php } ?>
+
+          <?php foreach(\Uc::app()->url->getAvailableLanguages() as $lang){?>
+            <input id="lang" type="image" src="<?php echo \Uc::app()->theme->getUrl() ?>/img/languages/<?echo $lang;?>.png" title="<?echo $lang;?>"
+                   onclick="getAjax('<?echo \Uc::app()->url->getAbsoluteRequestUrlByLang($lang);  ?>')"/>
+          <?}?>
+
           <div class="right">
             <div class="align-right">
               <p>
