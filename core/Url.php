@@ -17,6 +17,11 @@
     /**
      * @var string
      */
+    public $baseUrl = '';
+
+    /**
+     * @var string
+     */
     protected $protocol = '';
 
     /**
@@ -27,16 +32,14 @@
     /**
      * @var string
      */
-    public $baseUrl = '';
-
-    /**
-     *
-     * @var string
-     */
     protected $requestUrl = '';
 
     /**
-     *
+     * @var string
+     */
+    protected $currentLang = '';
+
+    /**
      * @var type
      */
     protected $requestPath = '';
@@ -85,6 +88,32 @@
 
     /**
      *
+     * @return type
+     */
+    public function getControllerName() {
+      $this->parseUrl();
+      return $this->controllerName;
+    }
+
+    /**
+     * @throws \Exception
+     * @return false if current language is default language
+     */
+    protected function canUseLangChar(){
+
+      if (!isset($this->multiLanguages) && !isset($this->multiLanguages['defaultLanguage'])){
+        throw new \Exception('Please set multiLanguages and defaultLanguage in class ' . get_class($this));
+      }
+
+      if($this->getCurrentLang() === $this->multiLanguages['defaultLanguage']){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     *
      * @throws \Exception
      * @return boolean
      */
@@ -114,6 +143,13 @@
 
         if (empty($this->requestUrl)) {
           $this->requestUrl = '/';
+        }
+
+        $lang = null;
+        if (preg_match('!^\/\w{2}\/!', $this->requestUrl, $lang)) {
+          $this->requestUrl = preg_replace('!^\/\w{2}!', '', $this->requestUrl);
+          $this->currentLang = ltrim(rtrim($lang[0], '/'), '/');
+
         }
 
         $queryString = !empty($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
@@ -172,59 +208,7 @@
       }
     }
 
-    public function createUrl($route, $params = array()) {
-      return $this->create($route, $params);
-    }
-
-    public function create($route, $params = array()) {
-      $url = $route;
-      if (empty($url) or $url == '/') {
-        return $this->getUrl();
-      }
-      foreach ($this->rules as $routeRegex => $routeAction) {
-        # prepare regexp Url
-        $regex = '!^' . $routeAction . '$!';
-        $regex = preg_replace('!<([^:]+)>!U', '<$1:.*>', $regex);
-        $regex = preg_replace('!<([^:]+):([^>]+)>!U', '(?P<$1>$2)', $regex);
-        if (preg_match($regex, $route, $match)) {
-          $url = $routeRegex;
-
-          if (strpos($routeRegex, '<') !== false) {
-            foreach ($match as $key => $value) {
-              $url = preg_replace('!<' . $key . '(:[^>]+|)>!U', trim($value, '/'), $url);
-            }
-          }
-          break;
-        }
-      }
-
-      if (!empty($params)) {
-
-        foreach ($params as $k => $v) {
-          $url = preg_replace('!<' . $k . '(:[^>]+|)>!', $v, $url, -1, $count);
-          if ($count) {
-            unset($params[$k]);
-          }
-        }
-
-        if (!empty($params)) {
-          $url .= '?' . http_build_query($params);
-        }
-      }
-
-      return $this->getUrl() . $url;
-    }
-
-    /**
-     *
-     * @return type
-     */
-    public function getControllerName() {
-      $this->parseUrl();
-      return $this->controllerName;
-    }
-
-    /**
+    /*
      *
      * @return type
      */
@@ -242,16 +226,6 @@
       return $this->params;
     }
 
-    /**
-     * Absolute url to index
-     *
-     * @author  Ivan Scherbak <dev@funivan.com> 8/13/12
-     * @return type
-     */
-    public function getUrl() {
-      return $this->protocol . '://' . $this->hostName . $this->baseUrl;
-    }
-
     public function getBaseUrl() {
       return $this->baseUrl;
     }
@@ -261,7 +235,27 @@
     }
 
     public function getAbsoluteRequestUrl() {
-      return $this->getUrl() . $this->requestUrl;
+        if($this->canUseLangChar())
+            return $this->getUrl() .'/'.$this->getCurrentLang(). $this->requestUrl;
+        else
+            return $this->getUrl() . $this->requestUrl;
+    }
+
+    public function getAbsoluteRequestUrlByLang($lang = null){
+      if($lang === null)
+        return $this->getAbsoluteRequestUrl();
+
+      return $this->getUrl() .'/'.$lang. $this->requestUrl;
+    }
+
+    /**
+     * Absolute url to index
+     *
+     * @author  Ivan Scherbak <dev@funivan.com> 8/13/12
+     * @return type
+     */
+    public function getUrl() {
+      return $this->protocol . '://' . $this->hostName . $this->baseUrl;
     }
 
     public function getRequestPath() {
@@ -276,6 +270,75 @@
       return $this->hostName;
     }
 
+    public function getCurrentLang() {
+
+      if (empty($this->currentLang)) {
+        if (isset($this->multiLanguages)
+          && isset($this->multiLanguages['defaultLanguage'])) {
+          $this->currentLang = $this->multiLanguages['defaultLanguage'];
+        } else {
+          $this->currentLang = 'ua';
+        }
+      }
+      return $this->currentLang;
+    }
+
+    /**
+     * @return array of available Languages
+     */
+    public function getAvailableLanguages(){
+      return $this->multiLanguages['availableLanguages'];
+    }
+
+    public function redirectToRoute($route, $params = array(), $code = null) {
+      $url = $this->create($route, $params);
+      $this->redirect($url, $code);
+    }
+
+    public function create($route, $params = array(), $lang = null) {
+      $url = $route;
+      if (empty($url) or $url != '/') {
+
+        foreach ($this->rules as $routeRegex => $routeAction) {
+          # prepare regexp Url
+          $regex = '!^' . $routeAction . '$!';
+          $regex = preg_replace('!<([^:]+)>!U', '<$1:.*>', $regex);
+          $regex = preg_replace('!<([^:]+):([^>]+)>!U', '(?P<$1>$2)', $regex);
+          if (preg_match($regex, $route, $match)) {
+            $url = $routeRegex;
+
+            if (strpos($routeRegex, '<') !== false) {
+              foreach ($match as $key => $value) {
+                $url = preg_replace('!<' . $key . '(:[^>]+|)>!U', trim($value, '/'), $url);
+              }
+            }
+            break;
+          }
+        }
+
+        if (!empty($params)) {
+
+          foreach ($params as $k => $v) {
+            $url = preg_replace('!<' . $k . '(:[^>]+|)>!', $v, $url, -1, $count);
+            if ($count) {
+              unset($params[$k]);
+            }
+          }
+
+          if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
+          }
+        }
+      }
+
+      if(!$this->canUseLangChar()){
+        $url = $this->getUrl() . $url;    
+      }else{
+        $url = $this->getUrl() . '/' . $this->getCurrentLang() . $url;
+      }
+      return $url;
+    }
+
     public function redirect($url = false, $code = 302) {
       if (empty($url) and !empty($_SERVER['HTTP_REFERER'])) {
         $url = $_SERVER['HTTP_REFERER'];
@@ -287,11 +350,6 @@
 
       header('Location: ' . $url);
       die();
-    }
-
-    public function redirectToRoute($route, $params = array(), $code = null) {
-      $url = $this->create($route, $params);
-      $this->redirect($url, $code);
     }
 
   }

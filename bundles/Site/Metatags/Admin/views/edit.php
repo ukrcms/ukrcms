@@ -3,7 +3,7 @@
     <?php if ($model->stored() == false) { ?>
       <div class="element">
         <label for="name">ID <span class="red">(обов'язково)</span></label>
-        <input id="name" name="data[id]" class="text" value="" required/>
+        <input id="name" name="data[id_sef]" class="text" value="" required/>
       </div>
     <?php } ?>
     <div class="element">

@@ -12,6 +12,8 @@
 
     protected static $settings = null;
 
+    protected $hasMultiLangTable = true;
+
     public function getTableName() {
       return \Uc::app()->db->tablePrefix . 'settings';
     }
@@ -24,8 +26,11 @@
     public static function get($key) {
       if (static::$settings === null) {
         $table = static::instance();
-        $query = $table->getAdapter()->query('SELECT `key`, `value` FROM `' . $table->getTableName() . '`');
-        static::$settings = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $query = $table->fetchAll();
+        foreach($query as $data){
+          static::$settings[$data->key] = $data->value;
+        }
+
       }
 
       return isset(static::$settings[$key]) ? static::$settings[$key] : null;

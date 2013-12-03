@@ -33,6 +33,11 @@
 
             </div>
           <?php } ?>
+           Мова сайту:
+          <?php foreach(\Uc::app()->url->getAvailableLanguages() as $lang){?>
+            [<a href="<?echo \Uc::app()->url->getAbsoluteRequestUrlByLang($lang);  ?>"><?echo $lang;?></a>]
+          <?}?>
+
           <div class="right">
             <div class="align-right">
               <p>

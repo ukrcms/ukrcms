@@ -17,6 +17,7 @@
         'username' => 'root',
         'password' => '1111',
         'tablePrefix' => 'uc_',
+        'tableLangsSuffix' => "_langs",
       ),
       'url' => array(
         'rules' => array(
@@ -30,7 +31,15 @@
           '/<sef>.html' => 'ub/site/pages/view',
           '/<controller:.*>/<action:[^/]+>' => '<controller>/<action>',
         ),
-        'baseUrl' => '/ukrcms/blog-pack'
+        'baseUrl' => '/ukrcms/blog-pack',
+        'multiLanguages' => array(
+          'availableLanguages' => array(
+            'ua',
+            'ru',
+            'en',
+          ),
+          'defaultLanguage' => 'ua',
+        ),
       ),
       'theme' => array(
         'themeName' => 'diverso',

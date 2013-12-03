@@ -73,3 +73,27 @@ $(function () {
 
 })
 ;
+
+
+function getAjax(url) {
+  $.ajax({
+    type: 'POST',
+    url: url,
+    data: { getajax: 'true'},
+    cache: false,
+    before: function () {
+      $('#main').html('Please wait...');
+    },
+
+    success: function (html) {
+
+      $('#main').html(html);
+
+      $('#title').ukrTranslit('#sef');
+      $(".cleditor").cleditor();
+    }
+  })
+
+
+
+}
