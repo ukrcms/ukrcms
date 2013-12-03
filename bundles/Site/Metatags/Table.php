@@ -16,6 +16,6 @@
     protected $modelClass = \Ub\Site\Metatags\Model::N;
 
     public function fetchForMainPage() {
-      return $this->fetchOne('mainpage');
+      return $this->select()->fetchOne('mainpage');
     }
   }
