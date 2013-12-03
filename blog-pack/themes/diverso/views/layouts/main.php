@@ -174,7 +174,6 @@
         <div id="sidebar" class="group">
           <div class="widget-last widget almost-all-categories">
             <h3><?php echo \Ub\Site\Settings\Table::get('categoryName') ?></h3>
-            <?php if ($pages = \Ub\Site\Pages\Table::instance()->getAllFromCache() and !empty($pages)) { ?>
               <ul>
                 <?php if ($categories = \Ub\Simpleblog\Categories\Table::instance()->getAllFromCache() and !empty($categories)) { ?>
                   <?php foreach ($categories as $category) { ?>
@@ -182,7 +181,6 @@
                   <?php } ?>
                 <?php } ?>
               </ul>
-            <?php } ?>
           </div>
         </div>
 
