@@ -332,7 +332,7 @@
             # do Update of entity
             $pk = $this->pk();
             $fields = array_intersect_key($this->data, $this->columnChanged);
-            $result = $this->table->update($fields, $pk);
+            $result = $this->table->update($fields, array($pk, $this->lang));
           } else {
             # do Insert of entity
             $result = $this->table->insert($this->data);

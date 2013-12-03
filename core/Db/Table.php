@@ -466,25 +466,63 @@
      */
     public function update($fields, $where) {
 
-      list($whereString, $params) = $this->getWhereAndParams($where);
+      if($this->hasMultiLangTable){
+       $tables = array();  
+       
+        foreach ($fields as $key => $value) {
+            $tableName = $this->getTableNameByField($key);
+            $tables[$tableName]['binds'][] = $value;
+            $tables[$tableName]['set'][] = '`' . $key . '` = ? ';
+        }
+        
+        if(array_key_exists($this->getMultiLangTable(), $tables)){
+             list($whereString, $params) = $this->getWhereAndParams(array('table_lang_id' => $where[0],
+                                                                          'lang' => $where[1]));
+            $params = array_merge($tables[$this->getMultiLangTable()]['binds'], $params);
+            $sql = 'Update `' . $this->getMultiLangTable() . '` Set ' . implode(', ', $tables[$this->getMultiLangTable() ]['set']) . ' Where ' . $whereString . '';
+            $smt = $this->getAdapter()->execute($sql, $params);
+        }
+        
+        if(array_key_exists($this->getTableName(), $tables)){
+            list($whereString, $params) = $this->getWhereAndParams($where[0]);
+            
+            $params = array_merge($tables[$this->getTableName()]['binds'], $params);
+            $sql = 'Update `' . $this->getTableName(). '` Set ' . implode(', ', $tables[$this->getTableName()]['set']) . ' Where ' . $whereString . '';
+            $smt = $this->getAdapter()->execute($sql, $params);
+            return $smt->rowCount();
+        }
+        
+        $sql = 'Select * FROM `' . $this->getTableName(). '`';
+        $smt = $this->getAdapter()->execute($sql);
+        return $smt->rowCount();
+      }else{
+        list($whereString, $params) = $this->getWhereAndParams($where);
 
-      $set = array();
-      foreach ($fields as $key => $value) {
-        $binds[] = $value;
-        $set[] = '`' . $key . '` = ? ';
+        $set = array();
+        foreach ($fields as $key => $value) {
+          $binds[] = $value;
+          $set[] = '`' . $key . '` = ? ';
+        }
+
+        $params = array_merge($binds, $params);
+        $sql = 'Update `' . $this->getTableName() . '` Set ' . implode(', ', $set) . ' Where ' . $whereString . '';
+        $smt = $this->getAdapter()->execute($sql, $params);
+        return $smt->rowCount();
       }
-
-      $params = array_merge($binds, $params);
-      $sql = 'Update `' . $this->getTableName() . '` Set ' . implode(', ', $set) . ' Where ' . $whereString . '';
-      $smt = $this->getAdapter()->execute($sql, $params);
-      return $smt->rowCount();
     }
 
     public function delete($where) {
-      list($whereString, $params) = $this->getWhereAndParams($where);
-      $sql = 'Delete from `' . $this->getTableName() . '`  Where ' . $whereString . '';
-      $smt = $this->getAdapter()->execute($sql, $params);
-      return $smt->rowCount();
+        if($this->hasMultiLangTable){
+            list($whereString, $params) = $this->getWhereAndParams(array('table_lang_id' => $where));
+
+            $sql = 'Delete  from `' . $this->getMultiLangTable() . '`  Where ' . $whereString . '';
+            $smt = $this->getAdapter()->execute($sql, $params);
+        }
+
+        list($whereString, $params) = $this->getWhereAndParams($where);
+        $sql = 'Delete from `' . $this->getTableName() . '`  Where ' . $whereString . '';
+        $smt = $this->getAdapter()->execute($sql, $params);
+        return $smt->rowCount();
     }
 
     /**

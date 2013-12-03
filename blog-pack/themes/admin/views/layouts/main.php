@@ -35,8 +35,7 @@
           <?php } ?>
 
           <?php foreach(\Uc::app()->url->getAvailableLanguages() as $lang){?>
-            <input id="lang" type="image" src="<?php echo \Uc::app()->theme->getUrl() ?>/img/languages/<?echo $lang;?>.png" title="<?echo $lang;?>"
-                   onclick="getAjax('<?echo \Uc::app()->url->getAbsoluteRequestUrlByLang($lang);  ?>')"/>
+            <a href="<?echo \Uc::app()->url->getAbsoluteRequestUrlByLang($lang);  ?>"><?echo $lang;?></a>
           <?}?>
 
           <div class="right">
